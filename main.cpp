@@ -14,18 +14,15 @@ int main(int argc, char* argv[]) {
 
     sf::Texture texture;
     texture.loadFromFile("texture.png");
-    
-    int i = 0;
-    Unit unit(texture);
-    unit.setPosition(map.cells[i].getPosition());
-    Unit unit2 = unit;
-    unit2.setPosition(map.cells[50].getPosition());
-    
-    sf::Clock clock;
-    clock.restart();
 
-    sf::IntRect rect;
-    rect.
+    std::string file = "texture.png";
+    Unit unit(file);
+    unit.setPosition(map.getCellPosition(5));
+    std::cout << unit.getId() << "\n";
+
+    Unit unit2(file);
+    unit2.setPosition(map.getCellPosition(5));
+    std::cout << unit2.getId() << "\n";
 
     while (window.isOpen()) {
 
@@ -38,21 +35,15 @@ int main(int argc, char* argv[]) {
     #pragma endregion
 
     #pragma region Update
-        if (clock.getElapsedTime() >= sf::seconds(1)) {
-            clock.restart();
-            i = (i + 1) % map.cells.size();
-            unit.setPosition(map.cells[i].getPosition());
-        }
+        
     #pragma endregion
 
     #pragma region Draw
         window.clear(sf::Color::White);
 
-        map.draw(window);
-        //window.draw(unit);
-        unit.draw(window);
+        window.draw(map);
+        window.draw(unit);
 
-        window.draw(unit2);
         window.display();
     #pragma endregion
     }

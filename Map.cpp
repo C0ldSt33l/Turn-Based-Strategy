@@ -1,6 +1,12 @@
 #include "Map.h"
 
-Map::Map::Map(sf::Vector2i size) : size(size.x, size.y) {
+void Map::Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    for (auto cell : cells) {
+        target.draw(cell);
+    }
+}
+
+Map::Map::Map(sf::Vector2i size) : sf::Drawable(), size(size.x, size.y) {
     int x = START_POS.x,
         y = START_POS.y;
 
@@ -28,8 +34,6 @@ Map::Map::~Map() {
     cells.clear();
 }
 
-void Map::Map::draw(sf::RenderWindow& window) {
-    for (auto cell : cells) {
-        window.draw(cell);
-    }
+sf::Vector2f Map::Map::getCellPosition(int i) const {
+    return cells[i].getPosition();
 }

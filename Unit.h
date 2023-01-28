@@ -7,34 +7,47 @@
 #include"Message.h"
 #include"Map.h"
 
+class targetSelect;
 
-class TargetSelect;
-
-class Unit : public sf::Sprite {
+class Unit : public sf::Drawable {
 protected:
-    int health;
-    //TargetSelect* target{ nullptr };
+    int ID;
+    sf::Vector2f position;
+    int maxHP,
+        HP;
+    sf::Texture texture;
+    sf::Sprite sprite;
+
     enum class Status {
         NONE,
-        HIDDING,
-        POISON,
         STUN,
-        INCREASE_ATTACK,
-        DECREASE_ATTACK
+        POISON,
+        HIDDEN
     };
+    Status status;
 
-    Status status = Status::NONE;
 public:
     Unit(sf::Texture& const texture, int health = 100);
+    Unit(std::string& const file, int health = 100);
     Unit(Unit& const unit);
-    virtual ~Unit();
+    ~Unit();
 
-    //virtual void action(Unit* target) = 0;
+    void setPosition(sf::Vector2f position);
+    void setPosition(int x, int y);
+    void setStatus(Status status);
 
-    //virtual void update() = 0;
-    //virtual void sendMessage(Message message) = 0;
+    int getId();
+    sf::Vector2f getPosition();
+    Status getStatus();
+
+    //void update() = 0;
+    //void sendMessage(Message& const messege) = 0;
 
     void takeDamage(int damage);
+    void takeHeal(int heal);
 
-    void draw(sf::RenderTarget& target) const;
+private:
+    static int generateId();
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

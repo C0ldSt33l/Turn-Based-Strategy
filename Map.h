@@ -9,9 +9,11 @@ namespace Map{
     const float        CELL_SIZE{ 75 };
     const sf::Vector2f START_POS{ 80, 60 };
 
-    class Map {
+    class Map : public sf::Drawable {
         sf::Vector2i size;
         sf::Sprite background;
+
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     public:
         std::vector<sf::RectangleShape> cells;
@@ -19,6 +21,6 @@ namespace Map{
         Map(sf::Vector2i size = { 9, 7 });
         ~Map();
 
-        void draw(sf::RenderWindow& window);
+        sf::Vector2f getCellPosition(int i) const;
     };
 }

@@ -3,6 +3,9 @@
 
 
 class Warrior : public Unit {
+private:
+    int damege;
+
 public:
     Warrior();
     Warrior(Warrior const& warrior);
