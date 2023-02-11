@@ -1,5 +1,6 @@
 #include<iostream>
 #include <SFML/Graphics.hpp>
+#include<queue>
 
 #include"Map.h"
 #include"Cell.h"
@@ -15,22 +16,21 @@ int main(int argc, char* argv[]) {
     sf::Texture texture;
     texture.loadFromFile("texture.png");
 
-    std::string file = "texture.png";
-    Unit unit(file);
-    unit.setPosition(map.getCellPosition(5));
-    std::cout << unit.getId() << "\n";
-
-    Unit unit2(file);
-    unit2.setPosition(map.getCellPosition(5));
-    std::cout << unit2.getId() << "\n";
+    Unit unit(texture);
+    unit.setPosition(map[50].getPosition());
+    unit.setCellNumber(50);
 
     while (window.isOpen()) {
-
     #pragma region Handle Events
         static sf::Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) 
-                window.close();
+            switch (event.type) {
+            case sf::Event::Closed:     window.close();
+                                        break;
+            case sf::Event::KeyPressed: unit.moveByKeyboard(map, event.key.code);  
+                                        break;
+            default: break;
+            }
         }
     #pragma endregion
 

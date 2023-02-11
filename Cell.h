@@ -2,17 +2,30 @@
 #include<SFML/Graphics.hpp>
 
 
-class Cell : public sf::RectangleShape {
+class Cell : public sf::Drawable {
+    int number;
     bool hasObject;
-    sf::Sprite sprite;
+
+    sf::RectangleShape rect;
+    //sf::Sprite sprite;
 
 public:
-    Cell();
-    Cell(Cell& const cell);
+    Cell(sf::Vector2f size);
+    Cell(float width, float height);
+    Cell(Cell const& cell);
     virtual ~Cell();
 
-    bool isEmpty();
+    void setNumber(int number);
+    void setPosition(sf::Vector2f position);
+    void setPosition(int x, int y);
 
-    void draw(sf::RenderWindow& window);
+    bool isEmpty();
+    int getNumber();
+    sf::Vector2f getPosition() const;
+    sf::Vector2f getSize() const;
+    float getOutlineThickness() const;
+
+private:
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

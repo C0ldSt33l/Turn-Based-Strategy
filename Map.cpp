@@ -10,22 +10,18 @@ Map::Map::Map(sf::Vector2i size) : sf::Drawable(), size(size.x, size.y) {
     int x = START_POS.x,
         y = START_POS.y;
 
-    sf::RectangleShape rect(sf::Vector2f(CELL_SIZE, CELL_SIZE));
-    rect.setFillColor(sf::Color::Green);
-    rect.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
-    rect.setOutlineThickness(5);
-    rect.setOutlineColor(sf::Color(23, 56, 190));
+    Cell tmp(CELL_SIZE);
 
     int totalSize = size.x * size.y;
-    for (int i = 0; i < totalSize;) {
-        rect.setPosition(x, y);
-        cells.push_back(rect);
-        
-        i++;
-        x += rect.getSize().x + rect.getOutlineThickness();
+    for (int i = 1; i <= totalSize; i++) {
+        tmp.setNumber(i - 1);
+        tmp.setPosition(x, y);
+        cells.push_back(tmp);
+
+        x += tmp.getSize().x + tmp.getOutlineThickness();
         if (!(i % size.x)) {
             x = START_POS.x;
-            y += rect.getSize().y + rect.getOutlineThickness();
+            y += tmp.getSize().y + tmp.getOutlineThickness();
         }
     }
 }
@@ -34,6 +30,6 @@ Map::Map::~Map() {
     cells.clear();
 }
 
-sf::Vector2f Map::Map::getCellPosition(int i) const {
-    return cells[i].getPosition();
+Cell Map::Map::operator[](int i) const {
+    return cells[i];
 }

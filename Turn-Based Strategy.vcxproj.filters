@@ -66,6 +66,9 @@
     <ClCompile Include="Wizard.cpp">
       <Filter>Исходные файлы\Unit</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Исходные файлы\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Unit.h">
@@ -96,6 +99,9 @@
       <Filter>Файлы заголовков\Manager</Filter>
     </ClInclude>
     <ClInclude Include="Spawner.h">
+      <Filter>Файлы заголовков\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
       <Filter>Файлы заголовков\Manager</Filter>
     </ClInclude>
   </ItemGroup>

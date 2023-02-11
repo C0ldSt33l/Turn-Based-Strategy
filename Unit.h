@@ -7,14 +7,18 @@
 #include"Message.h"
 #include"Map.h"
 
+// TODO:
+// change generateId();
+// implement targetSelect
+
 class targetSelect;
 
 class Unit : public sf::Drawable {
 protected:
     int ID;
-    sf::Vector2f position;
     int maxHP,
         HP;
+    int cellNumber;
     sf::Texture texture;
     sf::Sprite sprite;
 
@@ -34,14 +38,18 @@ public:
 
     void setPosition(sf::Vector2f position);
     void setPosition(int x, int y);
+    void setCellNumber(int number);
     void setStatus(Status status);
 
     int getId();
     sf::Vector2f getPosition();
+    int getCellNumber();
     Status getStatus();
 
     //void update() = 0;
     //void sendMessage(Message& const messege) = 0;
+
+    void moveByKeyboard(Map::Map const& map, sf::Keyboard::Key key);
 
     void takeDamage(int damage);
     void takeHeal(int heal);
