@@ -25,10 +25,12 @@ int main(int argc, char* argv[]) {
         static sf::Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
-            case sf::Event::Closed:     window.close();
-                                        break;
+            case sf::Event::Closed: window.close();
+                                    break;
             case sf::Event::KeyPressed: unit.moveByKeyboard(map, event.key.code);  
                                         break;
+            case sf::Event::MouseButtonPressed: unit.moveByMouse(map, event.mouseButton.button, sf::Mouse::getPosition(window));
+                                                break;
             default: break;
             }
         }

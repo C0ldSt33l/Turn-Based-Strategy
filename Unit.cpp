@@ -61,6 +61,17 @@ int Unit::getId() {
     return ++id;
 }
 
+void Unit::moveByMouse(Map::Map const& map, sf::Mouse::Button button, sf::Vector2i const& point) {
+    if (button != sf::Mouse::Left) return;
+    
+    for (sf::Uint8 i = 0; i < Map::CELL_COUNT; i++) {
+        if (map[i].contains(point)) {
+            sprite.setPosition(map[i].getPosition());
+            cellNumber = i;
+        }
+    }
+}
+
 void Unit::moveByKeyboard(Map::Map const& map, sf::Keyboard::Key key) {
     sf::Uint8 col = cellNumber % Map::MAP_SIZE.x,
               row = cellNumber / Map::MAP_SIZE.x;

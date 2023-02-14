@@ -49,6 +49,7 @@ public:
     //void update() = 0;
     //void sendMessage(Message& const messege) = 0;
 
+    void moveByMouse(Map::Map const& map, sf::Mouse::Button button, sf::Vector2i const& point);
     void moveByKeyboard(Map::Map const& map, sf::Keyboard::Key key);
 
     void takeDamage(int damage);

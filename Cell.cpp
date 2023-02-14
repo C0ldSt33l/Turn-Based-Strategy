@@ -59,6 +59,14 @@ float Cell::getOutlineThickness() const {
     return rect.getOutlineThickness();
 }
 
+bool Cell::contains(sf::Vector2f const& point) const {
+    return rect.getGlobalBounds().contains(point);
+}
+
+bool Cell::contains(sf::Vector2i const& point) const {
+    return rect.getGlobalBounds().contains(sf::Vector2f(point));
+}
+
 void Cell::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(rect);
 }

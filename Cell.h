@@ -25,6 +25,9 @@ public:
     sf::Vector2f getSize() const;
     float getOutlineThickness() const;
 
+    bool contains(sf::Vector2f const& point) const;
+    bool contains(sf::Vector2i const& point) const;
+
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
