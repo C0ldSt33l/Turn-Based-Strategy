@@ -12,7 +12,7 @@ private:
 
 public:
     TargetSelect();
-    TargetSelect(TargetSelect& const targerSelect);
+    TargetSelect(TargetSelect const& obj);
     ~TargetSelect();
 };
 

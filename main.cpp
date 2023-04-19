@@ -1,15 +1,17 @@
-#include<iostream>
+#include <iostream>
 #include <SFML/Graphics.hpp>
-#include<queue>
+#include <queue>
+#include <chrono>
 
-#include"Map.h"
-#include"Cell.h"
-#include"Unit.h"
+#include "Map.h"
+#include "Cell.h"
+#include "Unit.h"
 
 
 int main(int argc, char* argv[]) {
     sf::RenderWindow window(sf::VideoMode(800, 600), "TBS");
     window.setFramerateLimit(60);
+    //window.setKeyRepeatEnabled(false);
 
     Map::Map map;
 

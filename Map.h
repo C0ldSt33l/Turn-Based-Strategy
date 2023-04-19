@@ -1,8 +1,9 @@
 #pragma once
-#include<vector>
-#include<SFML/Graphics.hpp>
 
-#include"Cell.h"
+#include <vector>
+#include <SFML/Graphics.hpp>
+
+#include "Cell.h"
 
 
 namespace Map{

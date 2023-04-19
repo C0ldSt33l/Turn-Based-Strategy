@@ -1,4 +1,4 @@
-#include<SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 #include "Cell.h"
 #include "Map.h"
@@ -40,7 +40,7 @@ void Cell::setPosition(int x, int y) {
 }
 
 bool Cell::isEmpty(){
-    return hasObject;
+    return !hasObject;
 }
 
 int Cell::getNumber() {

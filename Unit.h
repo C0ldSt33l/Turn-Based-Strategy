@@ -1,11 +1,12 @@
 #pragma once
-#include<iostream>
-#include<SFML/Graphics.hpp>
 
-#include"Unit.h"
-#include"TargetSelect.h"
-#include"Message.h"
-#include"Map.h"
+#include <iostream>
+#include <SFML/Graphics.hpp>
+
+#include "Unit.h"
+#include "TargetSelect.h"
+#include "Message.h"
+#include "Map.h"
 
 // TODO:
 // change generateId();

@@ -4,8 +4,7 @@
 
 Unit::Unit(sf::Texture& const texture, int health) :
     Drawable(), ID(generateId()), HP(health), maxHP(health), texture(texture), sprite(texture), status(Status::NONE) {
-    sprite.setOrigin(texture.getSize().x / 2,
-                     texture.getSize().y / 2);
+    sprite.setOrigin((sf::Vector2f)texture.getSize() / 2.0f);
     sprite.setScale(Map::CELL_SIZE.x / (float)texture.getSize().x,
                     Map::CELL_SIZE.y / (float)texture.getSize().y);
 }
@@ -14,8 +13,7 @@ Unit::Unit(std::string& const file, int health) :
     Drawable(), ID(generateId()), HP(health), maxHP(health), status(Status::NONE) {
     texture.loadFromFile(file);
     sprite.setTexture(texture);
-    sprite.setOrigin(texture.getSize().x / 2,
-                     texture.getSize().y / 2);
+    sprite.setOrigin((sf::Vector2f)texture.getSize() / 2.0f);
     sprite.setScale(Map::CELL_SIZE.x / (float)texture.getSize().x,
                     Map::CELL_SIZE.y / (float)texture.getSize().y);
 }
