@@ -1,10 +1,5 @@
 #include "Map.h"
 
-void Map::Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    for (auto cell : cells) {
-        target.draw(cell);
-    }
-}
 
 Map::Map::Map(sf::Vector2i size) : sf::Drawable(), size(size.x, size.y) {
     int x = START_POS.x,
@@ -25,11 +20,16 @@ Map::Map::Map(sf::Vector2i size) : sf::Drawable(), size(size.x, size.y) {
         }
     }
 }
-
 Map::Map::~Map() {
     cells.clear();
 }
 
-Cell Map::Map::operator[](int i) const {
+Cell& Map::Map::operator[](int i) {
     return cells[i];
+}
+
+void Map::Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    for (auto cell : cells) {
+        target.draw(cell);
+    }
 }

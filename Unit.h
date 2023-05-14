@@ -16,7 +16,7 @@ class targetSelect;
 
 class Unit : public sf::Drawable {
 protected:
-    int ID;
+    const int ID;
     int maxHP,
         HP;
     int cellNumber;
@@ -37,8 +37,9 @@ public:
     Unit(Unit& const unit);
     ~Unit();
 
-    void setPosition(sf::Vector2f position);
+    void setPosition(sf::Vector2f const& position);
     void setPosition(int x, int y);
+    void setPosition(Cell& cell);
     void setCellNumber(int number);
     void setStatus(Status status);
 
@@ -50,8 +51,8 @@ public:
     //void update() = 0;
     //void sendMessage(Message& const messege) = 0;
 
-    void moveByMouse(Map::Map const& map, sf::Mouse::Button button, sf::Vector2i const& point);
-    void moveByKeyboard(Map::Map const& map, sf::Keyboard::Key key);
+    void moveByMouse(Map::Map& map, sf::Mouse::Button& button, sf::Vector2i const& point);
+    void moveByKeyboard(Map::Map& map, sf::Keyboard::Key key);
 
     void takeDamage(int damage);
     void takeHeal(int heal);

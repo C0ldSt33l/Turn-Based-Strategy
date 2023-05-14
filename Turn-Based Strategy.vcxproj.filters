@@ -13,96 +13,93 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков\Unit">
-      <UniqueIdentifier>{1560fcff-8b40-4f1e-b44e-e1406ba38889}</UniqueIdentifier>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{5794d7eb-5817-489d-a24e-fc59112ca4fd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\Manager">
-      <UniqueIdentifier>{f55ba8c2-d024-4dad-a887-db7f6b1f9765}</UniqueIdentifier>
+    <Filter Include="Map">
+      <UniqueIdentifier>{58546d3e-9c35-410f-9c7d-26d3fcb21d5a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\Map">
-      <UniqueIdentifier>{09e22f65-f4d8-462c-94b7-aaa7e9958ff6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\Unit">
-      <UniqueIdentifier>{8c4e6f7b-27ad-4851-aa57-5e3a2b6f1b32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\Map">
-      <UniqueIdentifier>{0238ef46-10e2-4c27-8c52-6a2528f560c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Исходные файлы\Manager">
-      <UniqueIdentifier>{d2a889d1-2a8f-447c-aa75-684876dee124}</UniqueIdentifier>
+    <Filter Include="Unit">
+      <UniqueIdentifier>{a1136f1b-0cad-4dfa-adc4-81ffd6d81ad7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Cell.cpp">
-      <Filter>Исходные файлы\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Manager.cpp">
-      <Filter>Исходные файлы\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Message.cpp">
-      <Filter>Исходные файлы\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>Исходные файлы\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Spawner.cpp">
-      <Filter>Исходные файлы\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Support.cpp">
-      <Filter>Исходные файлы\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="Unit.cpp">
-      <Filter>Исходные файлы\Unit</Filter>
+      <Filter>Unit</Filter>
     </ClCompile>
     <ClCompile Include="TargetSelect.cpp">
-      <Filter>Исходные файлы\Unit</Filter>
+      <Filter>Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>Unit</Filter>
     </ClCompile>
     <ClCompile Include="Warrior.cpp">
-      <Filter>Исходные файлы\Unit</Filter>
+      <Filter>Unit</Filter>
     </ClCompile>
     <ClCompile Include="Wizard.cpp">
-      <Filter>Исходные файлы\Unit</Filter>
+      <Filter>Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>Исходные файлы\Manager</Filter>
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Spawner.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Unit.h">
-      <Filter>Файлы заголовков\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="Warrior.h">
-      <Filter>Файлы заголовков\Unit</Filter>
+    <ClInclude Include="Support.h">
+      <Filter>Unit</Filter>
     </ClInclude>
     <ClInclude Include="TargetSelect.h">
-      <Filter>Файлы заголовков\Unit</Filter>
+      <Filter>Unit</Filter>
     </ClInclude>
-    <ClInclude Include="Support.h">
-      <Filter>Файлы заголовков\Unit</Filter>
+    <ClInclude Include="Unit.h">
+      <Filter>Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Warrior.h">
+      <Filter>Unit</Filter>
     </ClInclude>
     <ClInclude Include="Wizard.h">
-      <Filter>Файлы заголовков\Unit</Filter>
+      <Filter>Unit</Filter>
     </ClInclude>
     <ClInclude Include="Cell.h">
-      <Filter>Файлы заголовков\Map</Filter>
+      <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>Файлы заголовков\Map</Filter>
+      <Filter>Map</Filter>
     </ClInclude>
     <ClInclude Include="Manager.h">
-      <Filter>Файлы заголовков\Manager</Filter>
+      <Filter>Manager</Filter>
     </ClInclude>
     <ClInclude Include="Message.h">
-      <Filter>Файлы заголовков\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Spawner.h">
-      <Filter>Файлы заголовков\Manager</Filter>
+      <Filter>Manager</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
-      <Filter>Файлы заголовков\Manager</Filter>
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Spawner.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
