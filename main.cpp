@@ -8,17 +8,6 @@
 #include "Unit.h"
 
 
-void draw_map_cell(Map::Map& map) {
-    for (sf::Uint16 i = 0; i < Map::CELL_COUNT; i++) {
-        if (!(i % Map::MAP_SIZE.x)) {
-            std::cout << '\n';
-        }
-        std::cout << (map[i].isEmpty() ? "E" : "H");
-    }
-    
-    system("cls");
-}
-
 int main(int argc, char* argv[]) {
     sf::RenderWindow window(sf::VideoMode(800, 600), "TBS");
     window.setFramerateLimit(60);
@@ -28,15 +17,15 @@ int main(int argc, char* argv[]) {
 
     sf::Texture texture;
     texture.loadFromFile("texture.png");
+    
+    sf::Sprite sprite(texture);
+    sf::Color color;
 
-    Unit unit(texture), unit2(texture);
-    unit.setPosition(map[3]);
-    unit2.setPosition(map[25]);
-
+    Unit unit(texture, map[3]), unit2(texture, map[25]);
 
     #pragma region Handle Events
+    sf::Event event;
     while (window.isOpen()) {
-        static sf::Event event;
         while (window.pollEvent(event)) {
             switch (event.type) {
             case sf::Event::Closed:
@@ -44,11 +33,11 @@ int main(int argc, char* argv[]) {
                 break;
 
             case sf::Event::KeyPressed:
-                unit.moveByKeyboard(map, event.key.code);  
+                //unit.move_by_keyboard(map, event.key.code);
                 break;
 
             case sf::Event::MouseButtonPressed:
-                unit.moveByMouse(map, event.mouseButton.button, sf::Mouse::getPosition(window));
+                //unit.move_by_mouse(map, event.mouseButton.button, sf::Mouse::getPosition(window));
                 break;
 
             default:
@@ -58,11 +47,12 @@ int main(int argc, char* argv[]) {
     #pragma endregion
 
     #pragma region Update
-        
+        unit.move_by_mouse(map, event.mouseButton.button, sf::Mouse::getPosition(window));
+        //unit.move_by_keyboard(map, event.key.code);
     #pragma endregion
 
     #pragma region Draw
-        draw_map_cell(map);
+        map.draw_unit_position();
 
         window.clear(sf::Color::White);
 

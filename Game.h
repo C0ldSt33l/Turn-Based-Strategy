@@ -8,7 +8,6 @@
 class Game {
 private:
     sf::RenderWindow window;
-    //ResourceManager* res_manager;
     enum class Status {
         MAIN_MENU,
         SQUAD_MENU,

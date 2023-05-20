@@ -39,6 +39,8 @@ public:
     //friend Unit;
 
 private:
+    static sf::Uint32 generate_num();
+
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };
 

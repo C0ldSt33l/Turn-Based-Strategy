@@ -5,8 +5,7 @@
 
 
 Cell::Cell(sf::Vector2f size) :
-    sf::Drawable(), hasObject(false), rect(size) {
-    static int number = 0;
+    sf::Drawable(), number(Cell::generate_num()), hasObject(false), rect(size) {
     this->number = number++;
 
     this->rect.setFillColor(sf::Color::Green);
@@ -51,6 +50,11 @@ bool Cell::contains(sf::Vector2f const& point) const {
 }
 bool Cell::contains(sf::Vector2i const& point) const {
     return rect.getGlobalBounds().contains(sf::Vector2f(point));
+}
+
+sf::Uint32 Cell::generate_num() {
+    static sf::Uint32 new_number = 0;
+    return new_number++;
 }
 
 void Cell::draw(sf::RenderTarget& target, sf::RenderStates states) const {

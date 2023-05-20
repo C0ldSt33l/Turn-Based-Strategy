@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "Map.h"
 
 
@@ -22,6 +24,17 @@ Map::Map::Map(sf::Vector2i size) : sf::Drawable(), size(size.x, size.y) {
 }
 Map::Map::~Map() {
     cells.clear();
+}
+
+void Map::Map::draw_unit_position() const {
+    for (sf::Uint16 i = 0; i < CELL_COUNT; i++) {
+        if (!(i % MAP_SIZE.x)) {
+            std::cout << '\n';
+        }
+        std::cout << (this->cells[i].isEmpty() ? "E" : "H");
+    }
+
+    system("cls");
 }
 
 Cell& Map::Map::operator[](int i) {

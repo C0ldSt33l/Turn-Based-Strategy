@@ -3,9 +3,12 @@
 #include "ResourceManager.h"
 
 
-ResourceManager* ResourceManager::getInstance() {
-    if (!instance) instance = new ResourceManager();
+ResourceManager::ResourceManager() {
+    this->textures;
+}
 
+ResourceManager& ResourceManager::getInstance() {
+    static ResourceManager instance;
     return instance;
 }
 

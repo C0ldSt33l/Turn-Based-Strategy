@@ -25,6 +25,8 @@ namespace Map {
         Map(sf::Vector2i size = MAP_SIZE);
         ~Map();
 
+        void draw_unit_position() const;
+
         Cell& operator[](int i);
 
     private:

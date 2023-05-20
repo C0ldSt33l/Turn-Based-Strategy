@@ -145,6 +145,7 @@
     <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="Support.cpp" />
     <ClCompile Include="TargetSelect.cpp" />
+    <ClCompile Include="Turn.cpp" />
     <ClCompile Include="Unit.cpp" />
     <ClCompile Include="Warrior.cpp" />
     <ClCompile Include="Wizard.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="Spawner.h" />
     <ClInclude Include="Support.h" />
     <ClInclude Include="TargetSelect.h" />
+    <ClInclude Include="Turn.h" />
     <ClInclude Include="Unit.h" />
     <ClInclude Include="Warrior.h" />
     <ClInclude Include="Wizard.h" />
