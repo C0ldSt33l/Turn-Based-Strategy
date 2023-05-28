@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Libs\SFML\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp14</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -136,34 +136,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Cell.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="DMG_Dealer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Spawner.cpp" />
     <ClCompile Include="Support.cpp" />
-    <ClCompile Include="TargetSelect.cpp" />
-    <ClCompile Include="Turn.cpp" />
     <ClCompile Include="Unit.cpp" />
-    <ClCompile Include="Warrior.cpp" />
-    <ClCompile Include="Wizard.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cell.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="DMG_Dealer.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Spawner.h" />
     <ClInclude Include="Support.h" />
-    <ClInclude Include="TargetSelect.h" />
-    <ClInclude Include="Turn.h" />
     <ClInclude Include="Unit.h" />
-    <ClInclude Include="Warrior.h" />
-    <ClInclude Include="Wizard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

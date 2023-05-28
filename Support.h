@@ -4,13 +4,13 @@
 
 
 class Support : public Unit {
-private:
+protected:
     int heal;
 
 public:
     Support(int heal = 10);
     Support(Support const& support);
-    ~Support();
+    virtual ~Support();
 
     void action(Unit* target, int heal);
 };

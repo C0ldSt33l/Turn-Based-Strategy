@@ -4,37 +4,35 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include "Unit.h"
-#include "TargetSelect.h"
-#include "Message.h"
 #include "Map.h"
 
-// TODO:
-// implement find futute unit positioin
-// 
-// change generateId();
-// implement targetSelect
 
-class targetSelect;
+#define SEMI_TRANSPARENT_COLOR sf::Color{ 255, 255, 255, 128 }
+#define SELECT_COLOR           sf::Color::Red
 
-#define SEMI_TRANSPARENT_COLOR sf::Color{255, 255, 255, 128}
-
+struct Message;
 class Unit : public sf::Drawable {
+    const sf::Uint16 id;
+
 protected:
-    const int id;
+    static sf::Event event;
+
     int maxHP,
         HP;
-    int cellNumber;
     bool has_attacked,
          has_moved;
 
-    std::vector<int> available_zone;
+    sf::Uint16 cell_number;
+    Cell* cell;
+
+    std::vector<sf::Int16> available_zone;
 
     sf::Texture texture;
     sf::Sprite sprite;
 
     sf::Sprite future_sprite;
 
+public:
     enum class Status {
         NONE = 2,
         UNDEFEADABLE,
@@ -47,35 +45,38 @@ protected:
     };
     Status status;
 
-public:
-    Unit(sf::Texture& const texture, Cell& cell, int health = 100);
-    Unit(std::string& const file, Cell& cell, int health = 100);
-    Unit(Unit& const unit);
-    ~Unit();
+    Unit();
+    Unit(sf::Texture const& texture, Cell* cell, int health = 100);
+    Unit(std::string const file, Cell* cell, int health = 100);
+    Unit(Unit const& unit);
+    virtual ~Unit();
+    Unit& operator=(Unit const& unit);
 
     void set_position(sf::Vector2f const& position);
     void set_position(int x, int y);
     void set_position(Cell& cell);
-    void set_cellNumber(int number);
+    void set_cellNumber(sf::Uint16 number);
     void set_status(Status status);
+    void set_texture(sf::Texture const& texture);
+    void set_sprite_color(sf::Color const& color);
 
-    int get_id() const;
+    sf::Uint16 get_id() const;
     sf::Vector2f get_position() const;
     int get_cellNumber() const;
     Status get_status() const;
+    sf::Texture get_texture() const;
 
-    //void update() = 0;
-    //void sendMessage(Message& const messege) = 0;
+    void update();
 
-    void move_by_mouse(Map::Map& map, sf::Mouse::Button& button, sf::Vector2i const& point);
-    void move_by_keyboard(Map::Map& map, sf::Keyboard::Key key);
+    void move_by_mouse(map::Map& map, sf::Mouse::Button const& button, sf::Vector2i const& point);
+    void move_by_keyboard(map::Map& map, sf::Keyboard::Key const& key);
 
-    void take_damage(int damage);
-    void take_heal(int heal);
+    void take_damage(Unit* attacker, sf::Uint16 damage);
+    void take_heal(Unit* healer, sf::Uint16 heal);
 
 private:
-    static sf::Uint32 generate_id();
-    static int move();
+    static sf::Uint16 generate_id();
+    static sf::Sprite set_sprite(sf::Texture const& texture, sf::Vector2f const& pos);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

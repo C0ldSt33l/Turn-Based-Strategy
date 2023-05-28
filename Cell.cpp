@@ -5,43 +5,47 @@
 
 
 Cell::Cell(sf::Vector2f size) :
-    sf::Drawable(), number(Cell::generate_num()), hasObject(false), rect(size) {
-    this->number = number++;
-
-    this->rect.setFillColor(sf::Color::Green);
+    sf::Drawable(), number(Cell::generate_num()), has_object(false), rect(size) {
+    this->rect.setFillColor(CELL_FILL_COLOR);
     this->rect.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
-    this->rect.setOutlineThickness(Map::CELL_OUTLINE_THICKNESS);
-    this->rect.setOutlineColor(sf::Color(23, 56, 1950));
+    this->rect.setOutlineThickness(map::CELL_OUTLINE_THICKNESS);
+    this->rect.setOutlineColor(CELL_OUTLINE_COLOR);
+
+    this->unit = nullptr;
 }
 Cell::~Cell() {
 }
 
-void Cell::setStatus(bool hasObject) {
-    this->hasObject = hasObject;
+void Cell::set_status(bool hasObject) {
+    this->has_object = hasObject;
 }
-void Cell::setNumber(int number) {
+void Cell::set_number(int number) {
     this->number = number;
 }
-void Cell::setPosition(sf::Vector2f position) {
+void Cell::set_position(sf::Vector2f position) {
     rect.setPosition(position);
 }
-void Cell::setPosition(int x, int y) {
+void Cell::set_position(int x, int y) {
     rect.setPosition(x, y);
 }
-
-bool Cell::isEmpty() const {
-    return !hasObject;
+void Cell::make_empty() {
+    this->unit = nullptr;
+    this->has_object = false;
 }
-int Cell::getNumber() const {
+
+bool Cell::is_empty() const {
+    return !has_object;
+}
+int Cell::get_number() const {
     return number;
 }
-sf::Vector2f Cell::getPosition() const {
+sf::Vector2f Cell::get_position() const {
     return rect.getPosition();
 }
-sf::Vector2f Cell::getSize() const {
+sf::Vector2f Cell::get_size() const {
     return rect.getSize();
 }
-float Cell::getOutlineThickness() const {
+float Cell::get_outline_thickness() const {
     return rect.getOutlineThickness();
 }
 
@@ -52,8 +56,8 @@ bool Cell::contains(sf::Vector2i const& point) const {
     return rect.getGlobalBounds().contains(sf::Vector2f(point));
 }
 
-sf::Uint32 Cell::generate_num() {
-    static sf::Uint32 new_number = 0;
+sf::Uint16 Cell::generate_num() {
+    static sf::Uint16 new_number = 0;
     return new_number++;
 }
 

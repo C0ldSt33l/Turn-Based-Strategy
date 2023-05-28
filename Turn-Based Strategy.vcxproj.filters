@@ -30,16 +30,7 @@
     <ClCompile Include="Support.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
-    <ClCompile Include="TargetSelect.cpp">
-      <Filter>Unit</Filter>
-    </ClCompile>
     <ClCompile Include="Unit.cpp">
-      <Filter>Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="Warrior.cpp">
-      <Filter>Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="Wizard.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
     <ClCompile Include="Cell.cpp">
@@ -57,30 +48,15 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Spawner.cpp">
-      <Filter>Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Turn.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="DMG_Dealer.cpp">
+      <Filter>Unit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Support.h">
       <Filter>Unit</Filter>
     </ClInclude>
-    <ClInclude Include="TargetSelect.h">
-      <Filter>Unit</Filter>
-    </ClInclude>
     <ClInclude Include="Unit.h">
-      <Filter>Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="Warrior.h">
-      <Filter>Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="Wizard.h">
       <Filter>Unit</Filter>
     </ClInclude>
     <ClInclude Include="Cell.h">
@@ -98,14 +74,8 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Spawner.h">
-      <Filter>Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="Turn.h">
-      <Filter>Файлы заголовков</Filter>
+    <ClInclude Include="DMG_Dealer.h">
+      <Filter>Unit</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
