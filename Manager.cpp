@@ -11,8 +11,6 @@ Manager::Manager() {
         msg->set_create(new Unit("texture.png", &map::Map::get_instance()[i * map::MAP_SIZE.x]));
         this->send_messange(msg);
     }
-
-    this->update();
 }
 Manager::~Manager() {
     for (auto unit : this->units) {
@@ -26,35 +24,41 @@ Manager::~Manager() {
     this->messages.clear();
 }
 
-void Manager::update() {
+void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
     for (auto unit : this->units) {
-        unit->update();
+        unit->update(window, event);
     }
 
-	Message* cur_msg;
-	while (!this->messages.empty()) {
-		cur_msg = this->messages.back();
-		this->messages.pop_back();
+    Message* cur_msg;
+    while (!this->messages.empty()) {
+        cur_msg = this->messages.back();
+        this->messages.pop_back();
 
-		switch (cur_msg->type) {
-		case Message::Type::KILL: {
-			auto dead_body = std::find(this->units.cbegin(), this->units.cend(), cur_msg->kill.who_to_kill);
-			delete *dead_body;
-			this->units.erase(dead_body);
-		} break;
+        switch (cur_msg->type) {
+        case Message::Type::KILL: {
+            auto dead_body = std::find(this->units.cbegin(), this->units.cend(), cur_msg->kill.who_to_kill);
+            delete *dead_body;
+            this->units.erase(dead_body);
+        } break;
 
-		case Message::Type::CREATE: {
-			this->units.push_back(cur_msg->create.new_unit);
-		} break;
+        case Message::Type::CREATE: {
+            this->units.push_back(cur_msg->create.new_unit);
+        } break;
 
-		case Message::Type::MOVE:
-		case Message::Type::ATTACK: {
-		} break;
+        case Message::Type::MOVE: {
 
-		default:
-			break;
-		}
-	}
+        } break;
+
+        case Message::Type::ATTACK: {
+        } break;
+
+        case Message::Type::SELECT : {
+        } break;
+
+        default:
+            break;
+        }
+    }
 }
 void Manager::send_messange(Message* message) {
     this->messages.push_back(message);

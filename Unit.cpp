@@ -3,6 +3,9 @@
 #include "Manager.h"
 #include "DMG_Dealer.h"
 
+
+Unit* Unit::celected_unit = nullptr;
+
 Unit::Unit() : Drawable(), id(Unit::generate_id()), cell(nullptr) {}
 Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
     Drawable(), id(generate_id()), cell_number(cell->get_number()), HP(health), maxHP(health),
@@ -15,6 +18,8 @@ Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
     
     this->future_sprite = this->sprite;
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
+
+    this->is_selected = false;
 }
 Unit::Unit(std::string const file, Cell* cell, int health) :
     Drawable(), id(generate_id()), cell_number(cell->get_number()), HP(health), maxHP(health),
@@ -28,10 +33,12 @@ Unit::Unit(std::string const file, Cell* cell, int health) :
 
     this->future_sprite = this->sprite;
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
+
+    this->is_selected = false;
 }
 Unit::Unit(Unit const& unit) :
     sf::Drawable(), id(Unit::generate_id()), HP(unit.HP), maxHP(unit.maxHP), cell_number(unit.cell_number),
-    texture(unit.texture), sprite(unit.sprite), status(unit.status) {
+    texture(unit.texture), sprite(unit.sprite), status(unit.status) , is_selected(unit.is_selected){
     this->sprite.setTexture(this->texture);
 }
 Unit::~Unit() {
@@ -72,6 +79,11 @@ void Unit::set_texture(sf::Texture const&) {
 void Unit::set_sprite_color(sf::Color const& color) {
     this->sprite.setColor(color);
 }
+void Unit::set_selected_unit(sf::Vector2i const& point) {
+    if (this->cell->contains(point)) {
+        this->celected_unit = this;
+    }
+}
 
 sf::Vector2f Unit::get_position() const {
     return this->sprite.getPosition();
@@ -89,20 +101,31 @@ sf::Texture Unit::get_texture() const {
     return this->texture;
 }
 
-void Unit::move_by_mouse(map::Map& map, sf::Mouse::Button const& button, sf::Vector2i const& point) {
+void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
+    if (Unit::celected_unit && !this->is_selected) {
+        return;
+    }
+
+    if (event.mouseButton.button == sf::Mouse::Left) {
+        this->set_selected_unit(sf::Mouse::getPosition(window));
+    }
+
+}
+
+void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point) {
     //if (button != sf::Mouse::Left) return;
     
     for (sf::Uint8 i = 0; i < map::CELL_COUNT; i++) {
-        if (map[i].contains(point) && map[i].is_empty()) {
+        if (map::Map::get_instance()[i].contains(point) && map::Map::get_instance()[i].is_empty()) {
             if (button == sf::Mouse::Left) {
-                this->set_position(map[i]);
+                this->set_position(map::Map::get_instance()[i]);
             }
             
-            this->future_sprite.setPosition(map[i].get_position());
+            this->future_sprite.setPosition(map::Map::get_instance()[i].get_position());
         }
     }
 }
-void Unit::move_by_keyboard(map::Map& map, sf::Keyboard::Key const& key) {
+void Unit::move_by_keyboard( sf::Keyboard::Key const& key) {
     sf::Uint8 col = this->cell_number % map::MAP_SIZE.x,
               row = this->cell_number / map::MAP_SIZE.x;
     sf::Uint8 new_cell = this->cell_number;
@@ -132,12 +155,12 @@ void Unit::move_by_keyboard(map::Map& map, sf::Keyboard::Key const& key) {
         break;
     }
 
-    if (map[new_cell].is_empty()) {
+    if (map::Map::get_instance()[new_cell].is_empty()) {
         if (key == sf::Keyboard::Space) {
-            this->set_position(map[new_cell]);
+            this->set_position(map::Map::get_instance()[new_cell]);
         }
 
-        this->future_sprite.setPosition(map[new_cell].get_position());
+        this->future_sprite.setPosition(map::Map::get_instance()[new_cell].get_position());
     }
 }
 
@@ -166,10 +189,6 @@ sf::Uint16 Unit::generate_id() {
 void Unit::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(this->future_sprite);
     target.draw(this->sprite);
-}
-
-void Unit::update() {
-
 }
 
 sf::Sprite Unit::set_sprite(sf::Texture const& texture, sf::Vector2f const& pos) {

@@ -7,7 +7,6 @@
 
 
 class Manager {
-    Unit* selected_unit;
     std::list<Unit*> units;
     std::list<Message*> messages;
 
@@ -18,13 +17,11 @@ public:
     Manager(Manager const&) = delete;
     Manager& operator=(Manager const&) = delete;
 
-    void update();
+    void update(sf::RenderWindow const& window, sf::Event const& event);
     void send_messange(Message* message);
 
     void draw_units(sf::RenderTarget& target) const;
 
-    void select_cur_unit();
 
     static Manager& get_instance();
 };
-

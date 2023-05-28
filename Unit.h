@@ -15,7 +15,7 @@ class Unit : public sf::Drawable {
     const sf::Uint16 id;
 
 protected:
-    static sf::Event event;
+    static Unit* celected_unit;
 
     int maxHP,
         HP;
@@ -25,12 +25,12 @@ protected:
     sf::Uint16 cell_number;
     Cell* cell;
 
-    std::vector<sf::Int16> available_zone;
-
     sf::Texture texture;
     sf::Sprite sprite;
 
     sf::Sprite future_sprite;
+
+    bool is_selected;
 
 public:
     enum class Status {
@@ -59,6 +59,7 @@ public:
     void set_status(Status status);
     void set_texture(sf::Texture const& texture);
     void set_sprite_color(sf::Color const& color);
+    void set_selected_unit(sf::Vector2i const& point);
 
     sf::Uint16 get_id() const;
     sf::Vector2f get_position() const;
@@ -66,10 +67,10 @@ public:
     Status get_status() const;
     sf::Texture get_texture() const;
 
-    void update();
+    void update(sf::RenderWindow const& window, sf::Event const& event);
 
-    void move_by_mouse(map::Map& map, sf::Mouse::Button const& button, sf::Vector2i const& point);
-    void move_by_keyboard(map::Map& map, sf::Keyboard::Key const& key);
+    void move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point);
+    void move_by_keyboard(sf::Keyboard::Key const& key);
 
     void take_damage(Unit* attacker, sf::Uint16 damage);
     void take_heal(Unit* healer, sf::Uint16 heal);
