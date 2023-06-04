@@ -12,9 +12,10 @@ void Message::set_kill(Unit* killer, Unit* who_to_kill) {
     this->kill.killer = killer;
     this->kill.who_to_kill = who_to_kill;
 }
-void Message::set_move(sf::Event* event) {
-    this->type = Message::Type::MOVE;
-    this->move.event = event;
+void Message::set_move(Unit* unit, Cell* cell) {
+    this->type = Message::Type::MOVE_UNIT;
+    this->move.destination = cell;;
+    this->move.who_to_move = unit;
 }
 void Message::set_attack(Unit* attacker, Unit* who_to_attack) {
     this->type = Message::Type::ATTACK;
@@ -33,5 +34,5 @@ void Message::set_buff(Unit* buffer, Unit* who_to_buff) {
 }
 void Message::set_select(Unit* who_to_select) {
     this->type = Message::Type::SELECT;
-    this->select.who_select = who_to_select;
+    this->select.who_to_select = who_to_select;
 }

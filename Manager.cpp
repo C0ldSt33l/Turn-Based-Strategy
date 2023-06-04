@@ -45,14 +45,13 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
             this->units.push_back(cur_msg->create.new_unit);
         } break;
 
-        case Message::Type::MOVE: {
-
-        } break;
-
-        case Message::Type::ATTACK: {
-        } break;
-
-        case Message::Type::SELECT : {
+        case Message::Type::UNSELECT:
+        case Message::Type::MOVE_UNIT:
+        case Message::Type::ATTACK:
+        case Message::Type::SELECT: {
+            for (auto unit : this->units) {
+                unit->send_message(cur_msg);
+            }
         } break;
 
         default:

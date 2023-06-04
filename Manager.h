@@ -22,6 +22,5 @@ public:
 
     void draw_units(sf::RenderTarget& target) const;
 
-
     static Manager& get_instance();
 };

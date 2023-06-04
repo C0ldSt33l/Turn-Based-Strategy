@@ -5,24 +5,23 @@
 
 
 Unit* Unit::celected_unit = nullptr;
+sf::Clock Unit::select_colddown;
 
-Unit::Unit() : Drawable(), id(Unit::generate_id()), cell(nullptr) {}
+Unit::Unit() : Drawable(), id(Unit::generate_id()), cell(nullptr), cur_hp(100), max_hp(100) {}
 Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cell_number(cell->get_number()), HP(health), maxHP(health),
+    Drawable(), id(generate_id()), cell_number(cell->get_number()), cur_hp(health), max_hp(health),
     texture(texture), status(Unit::Status::NONE) {
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
-    
+
     cell->unit = this;
     cell->has_object = true;
     this->cell = cell;
     
     this->future_sprite = this->sprite;
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
-
-    this->is_selected = false;
 }
 Unit::Unit(std::string const file, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cell_number(cell->get_number()), HP(health), maxHP(health),
+    Drawable(), id(generate_id()), cell_number(cell->get_number()), cur_hp(health), max_hp(health),
     status(Status::NONE) {
     this->texture.loadFromFile(file);
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
@@ -33,16 +32,13 @@ Unit::Unit(std::string const file, Cell* cell, int health) :
 
     this->future_sprite = this->sprite;
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
-
-    this->is_selected = false;
 }
 Unit::Unit(Unit const& unit) :
-    sf::Drawable(), id(Unit::generate_id()), HP(unit.HP), maxHP(unit.maxHP), cell_number(unit.cell_number),
-    texture(unit.texture), sprite(unit.sprite), status(unit.status) , is_selected(unit.is_selected){
+    sf::Drawable(), id(Unit::generate_id()), cur_hp(unit.cur_hp), max_hp(unit.max_hp), cell_number(unit.cell_number),
+    texture(unit.texture), sprite(unit.sprite), status(unit.status) {
     this->sprite.setTexture(this->texture);
 }
 Unit::~Unit() {
-
 }
 Unit& Unit::operator=(Unit const& unit) {
     this->texture = unit.texture;
@@ -58,14 +54,16 @@ void Unit::set_position(sf::Vector2f const& position) {
 void Unit::set_position(int x, int y) {
     this->sprite.setPosition(x, y);
 }
-void Unit::set_position(Cell& cell) {
+void Unit::move_to(Cell* cell) {
     this->cell->make_empty();
 
-    this->cell = &cell;
+    this->cell = cell;
     this->cell->has_object = true;
     
-    this->cell_number = cell.get_number();
-    this->sprite.setPosition(cell.get_position());
+    this->cell_number = cell->get_number();
+    this->sprite.setPosition(cell->get_position());
+
+    this->select_colddown.restart();
 }
 void Unit::set_cellNumber(sf::Uint16 number) {
     this->cell_number = number;
@@ -79,10 +77,13 @@ void Unit::set_texture(sf::Texture const&) {
 void Unit::set_sprite_color(sf::Color const& color) {
     this->sprite.setColor(color);
 }
-void Unit::set_selected_unit(sf::Vector2i const& point) {
-    if (this->cell->contains(point)) {
-        this->celected_unit = this;
-    }
+void Unit::make_selected() {
+    this->celected_unit = this;
+    this->celected_unit->set_sprite_color(SELECT_COLOR);
+}
+void Unit::make_unselected() {
+    this->celected_unit->set_sprite_color(DEFAULT_COLOR);
+    this->celected_unit = nullptr;
 }
 
 sf::Vector2f Unit::get_position() const {
@@ -100,16 +101,58 @@ sf::Uint16 Unit::get_id() const {
 sf::Texture Unit::get_texture() const {
     return this->texture;
 }
+Unit* Unit::get_selected_unit() {
+    return this->celected_unit;
+}
 
 void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
-    if (Unit::celected_unit && !this->is_selected) {
+    if (!Unit::celected_unit && this->select_colddown.getElapsedTime().asMilliseconds() >= 250) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->cell->contains(sf::Mouse::getPosition(window))) {
+            Message* msg = new Message;
+            msg->sender = this;
+            msg->set_select(this);
+            Manager::get_instance().send_messange(msg);
+        }
+
         return;
     }
 
-    if (event.mouseButton.button == sf::Mouse::Left) {
-        this->set_selected_unit(sf::Mouse::getPosition(window));
+    if (this == Unit::celected_unit) {
+        this->move_by_mouse(event.mouseButton.button, sf::Mouse::getPosition(window));
     }
+}
+void Unit::send_message(Message* message) {
+    switch (message->type) {
+    case Message::Type::SELECT:
+        if (this == message->select.who_to_select) {
+            this->make_selected();
+        }
+        break;
 
+    case Message::Type::UNSELECT:
+        if (this == message->select.who_to_select) {
+            this->make_unselected();
+        }
+        break;
+
+    case Message::Type::ATTACK:
+        break;
+
+    case Message::Type::MOVE_UNIT:
+        if (this != message->move.who_to_move)
+            return;
+        this->move_to(message->move.destination);
+        break;
+
+    case Message::Type::MOVE_PROJECTION:
+        if (this != message->move.who_to_move)
+            return;
+        this->move_to(message->move.destination);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point) {
@@ -118,14 +161,24 @@ void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& po
     for (sf::Uint8 i = 0; i < map::CELL_COUNT; i++) {
         if (map::Map::get_instance()[i].contains(point) && map::Map::get_instance()[i].is_empty()) {
             if (button == sf::Mouse::Left) {
-                this->set_position(map::Map::get_instance()[i]);
+                //this->move_to(&map::Map::get_instance()[i]);
+                Message* msg = new Message;
+                msg->sender = this;
+                msg->set_select(this);
+                msg->type = Message::Type::UNSELECT;
+                Manager::get_instance().send_messange(msg);
+
+                msg = new Message;
+                msg->sender = this;
+                msg->set_move(this, &map::Map::get_instance()[i]);
+                Manager::get_instance().send_messange(msg);
             }
             
             this->future_sprite.setPosition(map::Map::get_instance()[i].get_position());
         }
     }
 }
-void Unit::move_by_keyboard( sf::Keyboard::Key const& key) {
+void Unit::move_by_keyboard(sf::Keyboard::Key const& key) {
     sf::Uint8 col = this->cell_number % map::MAP_SIZE.x,
               row = this->cell_number / map::MAP_SIZE.x;
     sf::Uint8 new_cell = this->cell_number;
@@ -157,17 +210,20 @@ void Unit::move_by_keyboard( sf::Keyboard::Key const& key) {
 
     if (map::Map::get_instance()[new_cell].is_empty()) {
         if (key == sf::Keyboard::Space) {
-            this->set_position(map::Map::get_instance()[new_cell]);
+            this->move_to(&map::Map::get_instance()[new_cell]);
         }
 
         this->future_sprite.setPosition(map::Map::get_instance()[new_cell].get_position());
     }
 }
+void Unit::move_projection(Cell const* cell) {
+    this->future_sprite.setPosition(cell->get_position());
+}
 
 void Unit::take_damage(Unit* attacker, sf::Uint16 damage) {
-    this->HP -= damage;
+    this->cur_hp -= damage;
 
-    if (this->HP <= 0) {
+    if (this->cur_hp <= 0) {
         std::cout << "Unit with id<" << this->id << "> is dead\n";
         
         Message* message = new Message;
@@ -177,7 +233,7 @@ void Unit::take_damage(Unit* attacker, sf::Uint16 damage) {
     }
 }
 void Unit::take_heal(Unit* healer, sf::Uint16 heal) {
-    this->HP = this->HP + heal > this->maxHP ? this->maxHP : this->HP + heal;
+    this->cur_hp = this->cur_hp + heal > this->max_hp ? this->max_hp : this->cur_hp + heal;
 }
 
 // STATIC FUNCTIONS

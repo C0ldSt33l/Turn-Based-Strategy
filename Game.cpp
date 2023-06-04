@@ -4,7 +4,7 @@
 
 Game::Game() : window(sf::VideoMode(WINDOW_SIZE.x, WINDOW_SIZE.y), WINDOW_NAME) {
     this->window.setFramerateLimit(WINDOW_FRAMERATE);
-    this->window.setKeyRepeatEnabled(false);
+    //this->window.setKeyRepeatEnabled(false);
     Manager::get_instance();
 }
 
@@ -23,18 +23,11 @@ void Game::update() {
             window.close();
             break;
 
-        case::sf::Event::KeyPressed:
-            break;
-
-        case::sf::Event::MouseButtonPressed:
-            break;
-
         default:
             break;
         }
     }
-
-    Manager::get_instance().update(this->window, this->event);
+        Manager::get_instance().update(this->window, this->event);
 }
 
 void Game::draw() {
