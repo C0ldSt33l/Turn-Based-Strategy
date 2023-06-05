@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Available_Zone.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="DMG_Dealer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Available_Zone.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="DMG_Dealer.h" />
     <ClInclude Include="Game.h" />

@@ -54,6 +54,9 @@
     <ClCompile Include="Game.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="Available_Zone.cpp">
+      <Filter>Unit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Support.h">
@@ -82,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Available_Zone.h">
+      <Filter>Unit</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 
 
 namespace map {
-    static const sf::Vector2i MAP_SIZE              { 9, 7 };
+    const sf::Vector2i MAP_SIZE              { 9, 7 };
 
     static const sf::Vector2f CELL_SIZE             { 75, 75 };
     static const float        CELL_OUTLINE_THICKNESS{ 5 };

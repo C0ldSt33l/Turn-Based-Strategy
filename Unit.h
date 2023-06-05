@@ -6,6 +6,7 @@
 
 #include "Map.h"
 #include "Message.h"
+#include "Available_Zone.h"
 
 
 #define SEMI_TRANSPARENT_COLOR sf::Color{ 255, 255, 255, 128 }
@@ -31,14 +32,13 @@ private:
 
 protected:
     static Unit* celected_unit;
-    static sf::Clock select_colddown;
+    static sf::Clock input_colddown;
 
     int max_hp,
         cur_hp;
     bool has_attacked,
          has_moved;
 
-    sf::Uint16 cell_number;
     Cell* cell;
 
     sf::Texture texture;
@@ -48,6 +48,7 @@ protected:
 
     Status status;
 
+    Available_Zone move_zone;
 
 public:
     Unit();
@@ -59,7 +60,6 @@ public:
 
     void set_position(sf::Vector2f const& position);
     void set_position(int x, int y);
-    void set_cellNumber(sf::Uint16 number);
     void set_status(Status status);
     void set_texture(sf::Texture const& texture);
     void set_sprite_color(sf::Color const& color);

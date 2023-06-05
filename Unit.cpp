@@ -5,11 +5,12 @@
 
 
 Unit* Unit::celected_unit = nullptr;
-sf::Clock Unit::select_colddown;
+
+sf::Clock Unit::input_colddown;
 
 Unit::Unit() : Drawable(), id(Unit::generate_id()), cell(nullptr), cur_hp(100), max_hp(100) {}
 Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cell_number(cell->get_number()), cur_hp(health), max_hp(health),
+    Drawable(), id(generate_id()), cur_hp(health), max_hp(health),
     texture(texture), status(Unit::Status::NONE) {
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
 
@@ -21,8 +22,7 @@ Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
 }
 Unit::Unit(std::string const file, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cell_number(cell->get_number()), cur_hp(health), max_hp(health),
-    status(Status::NONE) {
+    Drawable(), id(generate_id()), cur_hp(health), max_hp(health), status(Status::NONE), move_zone(cell, Available_Zone::Type::AROUND) {
     this->texture.loadFromFile(file);
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
     
@@ -34,8 +34,8 @@ Unit::Unit(std::string const file, Cell* cell, int health) :
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
 }
 Unit::Unit(Unit const& unit) :
-    sf::Drawable(), id(Unit::generate_id()), cur_hp(unit.cur_hp), max_hp(unit.max_hp), cell_number(unit.cell_number),
-    texture(unit.texture), sprite(unit.sprite), status(unit.status) {
+    sf::Drawable(), id(Unit::generate_id()), cur_hp(unit.cur_hp), max_hp(unit.max_hp), texture(unit.texture),
+    sprite(unit.sprite), status(unit.status) {
     this->sprite.setTexture(this->texture);
 }
 Unit::~Unit() {
@@ -53,20 +53,6 @@ void Unit::set_position(sf::Vector2f const& position) {
 }
 void Unit::set_position(int x, int y) {
     this->sprite.setPosition(x, y);
-}
-void Unit::move_to(Cell* cell) {
-    this->cell->make_empty();
-
-    this->cell = cell;
-    this->cell->has_object = true;
-    
-    this->cell_number = cell->get_number();
-    this->sprite.setPosition(cell->get_position());
-
-    this->select_colddown.restart();
-}
-void Unit::set_cellNumber(sf::Uint16 number) {
-    this->cell_number = number;
 }
 void Unit::set_status(Status status) {
     this->status = status;
@@ -89,9 +75,6 @@ void Unit::make_unselected() {
 sf::Vector2f Unit::get_position() const {
     return this->sprite.getPosition();
 }
-int Unit::get_cellNumber() const {
-    return this->cell_number;
-}
 Unit::Status Unit::get_status() const {
     return this->status;
 }
@@ -106,7 +89,7 @@ Unit* Unit::get_selected_unit() {
 }
 
 void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
-    if (!Unit::celected_unit && this->select_colddown.getElapsedTime().asMilliseconds() >= 250) {
+    if (!Unit::celected_unit && this->input_colddown.getElapsedTime().asMilliseconds() >= 250) {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->cell->contains(sf::Mouse::getPosition(window))) {
             Message* msg = new Message;
             msg->sender = this;
@@ -155,6 +138,16 @@ void Unit::send_message(Message* message) {
     }
 }
 
+void Unit::move_to(Cell* cell) {
+    this->cell->make_empty();
+
+    this->cell = cell;
+    this->cell->has_object = true;
+
+    this->sprite.setPosition(cell->get_position());
+
+    this->input_colddown.restart();
+}
 void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point) {
     //if (button != sf::Mouse::Left) return;
     
@@ -179,29 +172,29 @@ void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& po
     }
 }
 void Unit::move_by_keyboard(sf::Keyboard::Key const& key) {
-    sf::Uint8 col = this->cell_number % map::MAP_SIZE.x,
-              row = this->cell_number / map::MAP_SIZE.x;
-    sf::Uint8 new_cell = this->cell_number;
+    sf::Uint8 col = this->cell->number % map::MAP_SIZE.x,
+              row = this->cell->number / map::MAP_SIZE.x;
+    sf::Uint8 new_cell = this->cell->number;
 
     switch (key) {
     case sf::Keyboard::W:
     case sf::Keyboard::Up:
-        new_cell = --row < 255 ? this->cell_number - map::MAP_SIZE.x : this->cell_number;
+        new_cell = --row < 255 ? this->cell->number - map::MAP_SIZE.x : this->cell->number;
         break;
 
     case sf::Keyboard::S:
     case sf::Keyboard::Down:
-        new_cell = ++row < map::MAP_SIZE.y ? this->cell_number + map::MAP_SIZE.x : this->cell_number;
+        new_cell = ++row < map::MAP_SIZE.y ? this->cell->number + map::MAP_SIZE.x : this->cell->number;
         break;
 
     case sf::Keyboard::A:
     case sf::Keyboard::Left:
-        new_cell = --col < 255 ? this->cell_number - 1 : this->cell_number;
+        new_cell = --col < 255 ? this->cell->number - 1 : this->cell->number;
         break;
 
     case sf::Keyboard::D:
     case sf::Keyboard::Right:
-        new_cell = ++col < map::MAP_SIZE.x ? this->cell_number + 1 : this->cell_number;
+        new_cell = ++col < map::MAP_SIZE.x ? this->cell->number + 1 : this->cell->number;
         break;
   
     default:
