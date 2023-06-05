@@ -22,7 +22,8 @@ Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
 }
 Unit::Unit(std::string const file, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cur_hp(health), max_hp(health), status(Status::NONE), move_zone(cell, Available_Zone::Type::AROUND) {
+    Drawable(), id(generate_id()), cur_hp(health), max_hp(health), status(Status::NONE),
+    move_zone(cell, Available_Zone::Type::RECT) {
     this->texture.loadFromFile(file);
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
     
@@ -39,6 +40,8 @@ Unit::Unit(Unit const& unit) :
     this->sprite.setTexture(this->texture);
 }
 Unit::~Unit() {
+    this->cell->unit = nullptr;
+    this->cell->has_object = false;
 }
 Unit& Unit::operator=(Unit const& unit) {
     this->texture = unit.texture;
@@ -66,6 +69,11 @@ void Unit::set_sprite_color(sf::Color const& color) {
 void Unit::make_selected() {
     this->celected_unit = this;
     this->celected_unit->set_sprite_color(SELECT_COLOR);
+
+    for (auto cell : this->move_zone.get_zone()) {
+        if (!cell || cell == this->cell) continue;
+        cell->set_color(SELECT_COLOR);
+    }
 }
 void Unit::make_unselected() {
     this->celected_unit->set_sprite_color(DEFAULT_COLOR);
@@ -139,22 +147,25 @@ void Unit::send_message(Message* message) {
 }
 
 void Unit::move_to(Cell* cell) {
-    this->cell->make_empty();
+    for (auto cell : this->move_zone.get_zone()) {
+        if (!cell || cell == this->cell) continue;
+        cell->set_color(CELL_FILL_COLOR);
+    }
 
+    this->cell->make_empty();
     this->cell = cell;
     this->cell->has_object = true;
 
     this->sprite.setPosition(cell->get_position());
+    
+    this->move_zone.update(cell);
 
     this->input_colddown.restart();
 }
 void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point) {
-    //if (button != sf::Mouse::Left) return;
-    
     for (sf::Uint8 i = 0; i < map::CELL_COUNT; i++) {
-        if (map::Map::get_instance()[i].contains(point) && map::Map::get_instance()[i].is_empty()) {
+        if (map::Map::get_instance()[i].is_empty() && map::Map::get_instance()[i].in_available_zone(this->move_zone.get_zone()) && map::Map::get_instance()[i].contains(point)) {
             if (button == sf::Mouse::Left) {
-                //this->move_to(&map::Map::get_instance()[i]);
                 Message* msg = new Message;
                 msg->sender = this;
                 msg->set_select(this);

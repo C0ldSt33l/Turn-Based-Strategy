@@ -22,7 +22,7 @@ void Cell::set_status(bool hasObject) {
 void Cell::set_number(int number) {
     this->number = number;
 }
-void Cell::set_position(sf::Vector2f position) {
+void Cell::set_position(sf::Vector2f const& position) {
     rect.setPosition(position);
 }
 void Cell::set_position(int x, int y) {
@@ -32,12 +32,21 @@ void Cell::make_empty() {
     this->unit = nullptr;
     this->has_object = false;
 }
+void Cell::set_color(sf::Color const& color) {
+    this->rect.setFillColor(color);
+}
 
 bool Cell::is_empty() const {
     return !has_object;
 }
 int Cell::get_number() const {
     return number;
+}
+sf::Int16 Cell::get_row_number() const {
+    return this->number / map::MAP_SIZE.x;
+}
+sf::Int16 Cell::get_col_number() const {
+    return this->number % map::MAP_SIZE.x;
 }
 sf::Vector2f Cell::get_position() const {
     return rect.getPosition();
@@ -48,6 +57,15 @@ sf::Vector2f Cell::get_size() const {
 float Cell::get_outline_thickness() const {
     return rect.getOutlineThickness();
 }
+bool Cell::in_available_zone(std::vector<Cell*> const& zone) const {
+    for (auto cell : zone) {
+        if (!cell) continue;
+        if (this == cell)
+            return true;
+    }
+
+    return false;
+}
 
 bool Cell::contains(sf::Vector2f const& point) const {
     return rect.getGlobalBounds().contains(point);
@@ -55,6 +73,7 @@ bool Cell::contains(sf::Vector2f const& point) const {
 bool Cell::contains(sf::Vector2i const& point) const {
     return rect.getGlobalBounds().contains(sf::Vector2f(point));
 }
+
 
 sf::Uint16 Cell::generate_num() {
     static sf::Uint16 new_number = 0;
