@@ -37,13 +37,17 @@ void Cell::set_color(sf::Color const& color) {
 }
 
 bool Cell::is_empty() const {
-    return !has_object;
+    //return !has_object;
+    return !this->unit;
 }
 int Cell::get_number() const {
     return number;
 }
 sf::Int16 Cell::get_row_number() const {
     return this->number / map::MAP_SIZE.x;
+}
+Unit* Cell::get_unit() const {
+    return this->unit;
 }
 sf::Int16 Cell::get_col_number() const {
     return this->number % map::MAP_SIZE.x;

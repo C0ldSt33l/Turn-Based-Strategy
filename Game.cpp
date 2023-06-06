@@ -13,6 +13,16 @@ void Game::process() {
     while (this->window.isOpen()) {
         this->update();
         this->draw();
+
+        /*Unit* tmp = Unit::celected_unit;
+        if (tmp) {
+            std::cout << '\n';
+            for (auto cell : tmp->attack_zone.get_zone()) {
+                if (!cell) continue;
+                std::cout << cell->get_number() << (cell->get_unit() ? "U" : "E") << ' ';
+            }
+            system("cls");
+        }*/
    }
 }
 

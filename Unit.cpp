@@ -22,8 +22,8 @@ Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
     this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
 }
 Unit::Unit(std::string const file, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cur_hp(health), max_hp(health), status(Status::NONE),
-    move_zone(cell, Available_Zone::Type::RECT) {
+    Drawable(), id(generate_id()), cur_hp(health), max_hp(health), damage(150), status(Status::NONE),
+    move_zone(cell, Available_Zone::Type::RECT), attack_zone(cell, Available_Zone::Type::LINE) {
     this->texture.loadFromFile(file);
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
     
@@ -72,6 +72,11 @@ void Unit::make_selected() {
 
     for (auto cell : this->move_zone.get_zone()) {
         if (!cell || cell == this->cell) continue;
+        cell->set_color(SEMI_TRANSPARENT_COLOR);
+    }
+
+    for (auto cell : this->attack_zone.get_zone()) {
+        if (!cell) continue;
         cell->set_color(SELECT_COLOR);
     }
 }
@@ -93,7 +98,7 @@ sf::Texture Unit::get_texture() const {
     return this->texture;
 }
 Unit* Unit::get_selected_unit() {
-    return this->celected_unit;
+    return Unit::celected_unit;
 }
 
 void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
@@ -109,6 +114,7 @@ void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
     }
 
     if (this == Unit::celected_unit) {
+        this->attack(event.mouseButton.button, sf::Mouse::getPosition(window));
         this->move_by_mouse(event.mouseButton.button, sf::Mouse::getPosition(window));
     }
 }
@@ -127,15 +133,12 @@ void Unit::send_message(Message* message) {
         break;
 
     case Message::Type::ATTACK:
+        if (this == message->attack.who_to_attack) {
+            this->take_damage(message->attack.attacker);
+        }
         break;
 
     case Message::Type::MOVE_UNIT:
-        if (this != message->move.who_to_move)
-            return;
-        this->move_to(message->move.destination);
-        break;
-
-    case Message::Type::MOVE_PROJECTION:
         if (this != message->move.who_to_move)
             return;
         this->move_to(message->move.destination);
@@ -151,14 +154,20 @@ void Unit::move_to(Cell* cell) {
         if (!cell || cell == this->cell) continue;
         cell->set_color(CELL_FILL_COLOR);
     }
+    for (auto cell : this->attack_zone.get_zone()) {
+        if (!cell) continue;
+        cell->set_color(CELL_FILL_COLOR);
+    }
 
     this->cell->make_empty();
     this->cell = cell;
+    this->cell->unit = this;
     this->cell->has_object = true;
 
     this->sprite.setPosition(cell->get_position());
     
     this->move_zone.update(cell);
+    this->attack_zone.update(cell);
 
     this->input_colddown.restart();
 }
@@ -224,8 +233,21 @@ void Unit::move_projection(Cell const* cell) {
     this->future_sprite.setPosition(cell->get_position());
 }
 
-void Unit::take_damage(Unit* attacker, sf::Uint16 damage) {
-    this->cur_hp -= damage;
+void Unit::attack(sf::Mouse::Button const& button, sf::Vector2i const& point) {
+    if (button != sf::Mouse::Button::Right) return;
+
+    for (auto cell : this->attack_zone.get_zone()) {
+        if (cell && cell->unit && cell->contains(point)) {
+            Message* msg = new Message;
+            msg->sender = this;
+            msg->set_attack(this, cell->unit);
+            Manager::get_instance().send_messange(msg);
+        }
+    }
+}
+
+void Unit::take_damage(Unit* attacker) {
+    this->cur_hp -= attacker->damage;
 
     if (this->cur_hp <= 0) {
         std::cout << "Unit with id<" << this->id << "> is dead\n";
@@ -236,8 +258,8 @@ void Unit::take_damage(Unit* attacker, sf::Uint16 damage) {
         Manager::get_instance().send_messange(message);
     }
 }
-void Unit::take_heal(Unit* healer, sf::Uint16 heal) {
-    this->cur_hp = this->cur_hp + heal > this->max_hp ? this->max_hp : this->cur_hp + heal;
+void Unit::take_heal(Unit* healer) {
+    //this->cur_hp = this->cur_hp + heal > this->max_hp ? this->max_hp : this->cur_hp + heal;
 }
 
 // STATIC FUNCTIONS

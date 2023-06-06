@@ -5,17 +5,28 @@
 
 
 Manager::Manager() {
-    for (int i = 0; i < 4; i++) {
+    /*for (int i = 0; i < 4; i++) {
         Message* msg = new Message;
         msg->sender = nullptr;
         msg->set_create(new Unit("texture.png", &map::Map::get_instance()[i * map::MAP_SIZE.x]));
         this->send_messange(msg);
-    }
+    }*/
 
-    /*Message* msg = new Message;
+    Message* msg = new Message;
     msg->sender = nullptr;
     msg->set_create(new Unit("texture.png", &map::Map::get_instance()[0]));
-    this->send_messange(msg);*/
+    this->send_messange(msg);
+
+    msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(new Unit("texture.png", &map::Map::get_instance()[8]));
+    msg->create.new_unit->attack_zone.invert();
+    this->send_messange(msg);
+
+    msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(new Unit("texture.png", &map::Map::get_instance()[22]));
+    this->send_messange(msg);
 }
 Manager::~Manager() {
     for (auto unit : this->units) {

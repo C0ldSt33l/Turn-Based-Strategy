@@ -9,6 +9,9 @@
 #include "Available_Zone.h"
 
 
+// TODO:
+// implement update for Available_Zone::Type::LINE
+
 #define SEMI_TRANSPARENT_COLOR sf::Color{ 255, 255, 255, 128 }
 #define DEFAULT_COLOR          sf::Color{ 255, 255, 255, 255 }
 #define SELECT_COLOR           sf::Color::Red
@@ -17,7 +20,7 @@ struct Message;
 class Unit : public sf::Drawable {
 public:
     enum class Status {
-        NONE = 2,
+        NONE,
         UNDEFEADABLE,
         ATK_BUFF,
         DEF_BUFF,
@@ -26,16 +29,17 @@ public:
         POISON,
         HIDDEN,
     };
+    static Unit* celected_unit;
 
 private:
     const sf::Uint16 id;
 
 protected:
-    static Unit* celected_unit;
     static sf::Clock input_colddown;
 
     int max_hp,
         cur_hp;
+    int damage;
     bool has_attacked,
          has_moved;
 
@@ -51,6 +55,8 @@ protected:
     Available_Zone move_zone;
 
 public:
+    Available_Zone attack_zone;
+
     Unit();
     Unit(sf::Texture const& texture, Cell* cell, int health = 100);
     Unit(std::string const file, Cell* cell, int health = 100);
@@ -71,22 +77,23 @@ public:
     int get_cellNumber() const;
     Status get_status() const;
     sf::Texture get_texture() const;
-    Unit* get_selected_unit();
 
-    void update(sf::RenderWindow const& window, sf::Event const& event);
-    void send_message(Message* message);
+    virtual void update(sf::RenderWindow const& window, sf::Event const& event);
+    virtual void send_message(Message* message);
+
+    void attack(sf::Mouse::Button const& button, sf::Vector2i const& point);
 
     void move_to(Cell* cell);
     void move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point);
     void move_by_keyboard(sf::Keyboard::Key const& key);
     void move_projection(Cell const* cell);
 
-    void take_damage(Unit* attacker, sf::Uint16 damage);
-    void take_heal(Unit* healer, sf::Uint16 heal);
+    void take_damage(Unit* attacker);
+    void take_heal(Unit* healer);
 
 private:
     static sf::Uint16 generate_id();
     static sf::Sprite set_sprite(sf::Texture const& texture, sf::Vector2f const& pos);
-
+    static Unit* get_selected_unit();
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

@@ -31,6 +31,7 @@ public:
 
     bool is_empty() const;
     int get_number() const;
+    Unit* get_unit() const;
     sf::Int16 get_row_number() const;
     sf::Int16 get_col_number() const;
     sf::Vector2f get_position() const;
