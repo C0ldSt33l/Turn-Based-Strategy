@@ -4,7 +4,7 @@
 
 Game::Game() : window(sf::VideoMode(WINDOW_SIZE.x, WINDOW_SIZE.y), WINDOW_NAME) {
     this->window.setFramerateLimit(WINDOW_FRAMERATE);
-    //this->window.setKeyRepeatEnabled(false);
+    //sthis->window.setKeyRepeatEnabled(false);
     Manager::get_instance();
 }
 
@@ -13,16 +13,6 @@ void Game::process() {
     while (this->window.isOpen()) {
         this->update();
         this->draw();
-
-        /*Unit* tmp = Unit::celected_unit;
-        if (tmp) {
-            std::cout << '\n';
-            for (auto cell : tmp->attack_zone.get_zone()) {
-                if (!cell) continue;
-                std::cout << cell->get_number() << (cell->get_unit() ? "U" : "E") << ' ';
-            }
-            system("cls");
-        }*/
    }
 }
 
@@ -37,12 +27,13 @@ void Game::update() {
             break;
         }
     }
-        Manager::get_instance().update(this->window, this->event);
+    Manager::get_instance().update(this->window, this->event);
 }
 
 void Game::draw() {
     window.clear(sf::Color::White);
 
+    map::Map::get_instance().draw_unit_position();
     window.draw(map::Map::get_instance());
     Manager::get_instance().draw_units(window);
 

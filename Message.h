@@ -8,15 +8,17 @@ struct Message {
     enum class Type {
         CREATE,
         KILL,
-        MOVE_UNIT,
-        MOVE_PROJECTION,
-        //MOVE_BY_KEYBOARD,
-        //MOVE_BY_MOUSE,
-        ATTACK,
-        HEAL,
-        BUFF,
+
         SELECT,
         UNSELECT,
+
+        SWITCH_MODE,
+
+        MOVE,
+        //ATTACK,
+        DEAL_DMG,
+        HEAL,
+        BUFF,
     };
     Message::Type type;
     Unit* sender;
@@ -33,9 +35,10 @@ struct Message {
             Cell* destination;
         } move;
         struct {
+            sf::Uint16 damage;
             Unit* attacker;
             Unit* who_to_attack;
-        } attack;
+        } take_dmg;
         struct {
             Unit* healer;
             Unit* who_to_heal;
@@ -54,7 +57,7 @@ struct Message {
     void set_create(Unit* new_unit);
     void set_kill(Unit* killer, Unit* who_to_kill);
     void set_move(Unit* unit, Cell* cell);
-    void set_attack(Unit* attacker, Unit* who_to_attack);
+    void set_deal_dmg(Unit* attacker, Unit* who_to_attack, sf::Uint16 damage);
     void set_heal(Unit* healer, Unit* who_to_heal);
     void set_buff(Unit* buffer, Unit* who_to_buff);
     void set_select(Unit* who_to_select);

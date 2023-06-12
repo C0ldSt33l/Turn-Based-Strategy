@@ -5,7 +5,7 @@
 
 
 Cell::Cell(sf::Vector2f size) :
-    sf::Drawable(), number(Cell::generate_num()), has_object(false), rect(size) {
+    sf::Drawable(), number(Cell::generate_num()), rect(size) {
     this->rect.setFillColor(CELL_FILL_COLOR);
     this->rect.setOrigin(rect.getSize().x / 2, rect.getSize().y / 2);
     this->rect.setOutlineThickness(map::CELL_OUTLINE_THICKNESS);
@@ -16,9 +16,6 @@ Cell::Cell(sf::Vector2f size) :
 Cell::~Cell() {
 }
 
-void Cell::set_status(bool hasObject) {
-    this->has_object = hasObject;
-}
 void Cell::set_number(int number) {
     this->number = number;
 }
@@ -30,14 +27,12 @@ void Cell::set_position(int x, int y) {
 }
 void Cell::make_empty() {
     this->unit = nullptr;
-    this->has_object = false;
 }
 void Cell::set_color(sf::Color const& color) {
     this->rect.setFillColor(color);
 }
 
 bool Cell::is_empty() const {
-    //return !has_object;
     return !this->unit;
 }
 int Cell::get_number() const {

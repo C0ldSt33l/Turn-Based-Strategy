@@ -13,14 +13,15 @@ void Message::set_kill(Unit* killer, Unit* who_to_kill) {
     this->kill.who_to_kill = who_to_kill;
 }
 void Message::set_move(Unit* unit, Cell* cell) {
-    this->type = Message::Type::MOVE_UNIT;
+    this->type = Message::Type::MOVE;
     this->move.destination = cell;;
     this->move.who_to_move = unit;
 }
-void Message::set_attack(Unit* attacker, Unit* who_to_attack) {
-    this->type = Message::Type::ATTACK;
-    this->attack.attacker = attacker;
-    this->attack.who_to_attack = who_to_attack;
+void Message::set_deal_dmg(Unit* attacker, Unit* who_to_attack, sf::Uint16 damage) {
+    this->type = Message::Type::DEAL_DMG;
+    this->take_dmg.damage = damage;
+    this->take_dmg.attacker = attacker;
+    this->take_dmg.who_to_attack = who_to_attack;
 }
 void Message::set_heal(Unit* healer, Unit* who_to_heal) {
     this->type = Message::Type::HEAL;

@@ -8,31 +8,16 @@ Unit* Unit::celected_unit = nullptr;
 
 sf::Clock Unit::input_colddown;
 
-Unit::Unit() : Drawable(), id(Unit::generate_id()), cell(nullptr), cur_hp(100), max_hp(100) {}
-Unit::Unit(sf::Texture const& texture, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cur_hp(health), max_hp(health),
-    texture(texture), status(Unit::Status::NONE) {
-    this->sprite = Unit::set_sprite(this->texture, cell->get_position());
-
-    cell->unit = this;
-    cell->has_object = true;
-    this->cell = cell;
-    
-    this->future_sprite = this->sprite;
-    this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
-}
-Unit::Unit(std::string const file, Cell* cell, int health) :
-    Drawable(), id(generate_id()), cur_hp(health), max_hp(health), damage(150), status(Status::NONE),
-    move_zone(cell, Available_Zone::Type::RECT), attack_zone(cell, Available_Zone::Type::LINE) {
+Unit::Unit(std::string const file, int health, Available_Zone::Type move_zone) :
+    Drawable(), id(generate_id()), cell(nullptr), cur_hp(health), max_hp(health), status(Status::NONE),
+    move_zone(cell, move_zone) {
     this->texture.loadFromFile(file);
-    this->sprite = Unit::set_sprite(this->texture, cell->get_position());
-    
-    cell->unit = this;
-    cell->has_object = true;
-    this->cell = cell;
+    this->sprite = Unit::set_sprite(this->texture, sf::Vector2f()/*cell->get_position()*/);
 
-    this->future_sprite = this->sprite;
-    this->future_sprite.setColor(SEMI_TRANSPARENT_COLOR);
+    this->projection = this->sprite;
+    this->projection.setColor(SEMI_TRANSPARENT_COLOR);
+
+    this->action_mode = Unit::Mode::MOVING;
 }
 Unit::Unit(Unit const& unit) :
     sf::Drawable(), id(Unit::generate_id()), cur_hp(unit.cur_hp), max_hp(unit.max_hp), texture(unit.texture),
@@ -41,7 +26,6 @@ Unit::Unit(Unit const& unit) :
 }
 Unit::~Unit() {
     this->cell->unit = nullptr;
-    this->cell->has_object = false;
 }
 Unit& Unit::operator=(Unit const& unit) {
     this->texture = unit.texture;
@@ -74,13 +58,10 @@ void Unit::make_selected() {
         if (!cell || cell == this->cell) continue;
         cell->set_color(SEMI_TRANSPARENT_COLOR);
     }
-
-    for (auto cell : this->attack_zone.get_zone()) {
-        if (!cell) continue;
-        cell->set_color(SELECT_COLOR);
-    }
 }
 void Unit::make_unselected() {
+    this->action_mode = Unit::Mode::MOVING;
+
     this->celected_unit->set_sprite_color(DEFAULT_COLOR);
     this->celected_unit = nullptr;
 }
@@ -101,75 +82,20 @@ Unit* Unit::get_selected_unit() {
     return Unit::celected_unit;
 }
 
-void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
-    if (!Unit::celected_unit && this->input_colddown.getElapsedTime().asMilliseconds() >= 250) {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->cell->contains(sf::Mouse::getPosition(window))) {
-            Message* msg = new Message;
-            msg->sender = this;
-            msg->set_select(this);
-            Manager::get_instance().send_messange(msg);
-        }
-
-        return;
-    }
-
-    if (this == Unit::celected_unit) {
-        this->attack(event.mouseButton.button, sf::Mouse::getPosition(window));
-        this->move_by_mouse(event.mouseButton.button, sf::Mouse::getPosition(window));
-    }
-}
-void Unit::send_message(Message* message) {
-    switch (message->type) {
-    case Message::Type::SELECT:
-        if (this == message->select.who_to_select) {
-            this->make_selected();
-        }
-        break;
-
-    case Message::Type::UNSELECT:
-        if (this == message->select.who_to_select) {
-            this->make_unselected();
-        }
-        break;
-
-    case Message::Type::ATTACK:
-        if (this == message->attack.who_to_attack) {
-            this->take_damage(message->attack.attacker);
-        }
-        break;
-
-    case Message::Type::MOVE_UNIT:
-        if (this != message->move.who_to_move)
-            return;
-        this->move_to(message->move.destination);
-        break;
-
-    default:
-        break;
-    }
-}
-
 void Unit::move_to(Cell* cell) {
     for (auto cell : this->move_zone.get_zone()) {
         if (!cell || cell == this->cell) continue;
         cell->set_color(CELL_FILL_COLOR);
     }
-    for (auto cell : this->attack_zone.get_zone()) {
-        if (!cell) continue;
-        cell->set_color(CELL_FILL_COLOR);
-    }
 
-    this->cell->make_empty();
+    if (this->cell) this->cell->make_empty();
     this->cell = cell;
     this->cell->unit = this;
-    this->cell->has_object = true;
 
     this->sprite.setPosition(cell->get_position());
-    
-    this->move_zone.update(cell);
-    this->attack_zone.update(cell);
+    this->projection.setPosition(cell->get_position());
 
-    this->input_colddown.restart();
+    this->move_zone.update(cell);
 }
 void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point) {
     for (sf::Uint8 i = 0; i < map::CELL_COUNT; i++) {
@@ -187,7 +113,7 @@ void Unit::move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& po
                 Manager::get_instance().send_messange(msg);
             }
             
-            this->future_sprite.setPosition(map::Map::get_instance()[i].get_position());
+            this->projection.setPosition(map::Map::get_instance()[i].get_position());
         }
     }
 }
@@ -226,28 +152,28 @@ void Unit::move_by_keyboard(sf::Keyboard::Key const& key) {
             this->move_to(&map::Map::get_instance()[new_cell]);
         }
 
-        this->future_sprite.setPosition(map::Map::get_instance()[new_cell].get_position());
+        this->projection.setPosition(map::Map::get_instance()[new_cell].get_position());
     }
 }
 void Unit::move_projection(Cell const* cell) {
-    this->future_sprite.setPosition(cell->get_position());
+    this->projection.setPosition(cell->get_position());
 }
 
-void Unit::attack(sf::Mouse::Button const& button, sf::Vector2i const& point) {
-    if (button != sf::Mouse::Button::Right) return;
+//void Unit::attack(sf::Mouse::Button const& button, sf::Vector2i const& point) {
+//    if (button != sf::Mouse::Button::Right) return;
+//
+//    for (auto cell : this->attack_zone.get_zone()) {
+//        if (cell && cell->unit && cell->contains(point)) {
+//            Message* msg = new Message;
+//            msg->sender = this;
+//            msg->set_attack(this, cell->unit);
+//            Manager::get_instance().send_messange(msg);
+//        }
+//    }
+//}
 
-    for (auto cell : this->attack_zone.get_zone()) {
-        if (cell && cell->unit && cell->contains(point)) {
-            Message* msg = new Message;
-            msg->sender = this;
-            msg->set_attack(this, cell->unit);
-            Manager::get_instance().send_messange(msg);
-        }
-    }
-}
-
-void Unit::take_damage(Unit* attacker) {
-    this->cur_hp -= attacker->damage;
+void Unit::take_damage(Unit* attacker, sf::Uint16 damage) {
+    this->cur_hp -= damage;
 
     if (this->cur_hp <= 0) {
         std::cout << "Unit with id<" << this->id << "> is dead\n";
@@ -258,8 +184,8 @@ void Unit::take_damage(Unit* attacker) {
         Manager::get_instance().send_messange(message);
     }
 }
-void Unit::take_heal(Unit* healer) {
-    //this->cur_hp = this->cur_hp + heal > this->max_hp ? this->max_hp : this->cur_hp + heal;
+void Unit::take_heal(Unit* healer, sf::Uint16 heal) {
+    this->cur_hp = this->cur_hp + heal > this->max_hp ? this->max_hp : this->cur_hp + heal;
 }
 
 // STATIC FUNCTIONS
@@ -269,7 +195,7 @@ sf::Uint16 Unit::generate_id() {
 }
 
 void Unit::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(this->future_sprite);
+    target.draw(this->projection);
     target.draw(this->sprite);
 }
 
@@ -278,7 +204,7 @@ sf::Sprite Unit::set_sprite(sf::Texture const& texture, sf::Vector2f const& pos)
     sprite.setOrigin((sf::Vector2f)texture.getSize() / 2.0f);
     sprite.setScale(map::CELL_SIZE.x / (float)texture.getSize().x,
                     map::CELL_SIZE.y / (float)texture.getSize().y);
-    sprite.setPosition(pos);
+    //sprite.setPosition(pos);
 
     return sprite;
 }

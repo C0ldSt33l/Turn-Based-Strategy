@@ -6,12 +6,21 @@
 class DMG_Dealer : public Unit {
 protected:
     sf::Uint16 damage;
+    Available_Zone attack_zone;
 
 public:
     DMG_Dealer();
-    DMG_Dealer(DMG_Dealer const& dmg_dealer);
     virtual ~DMG_Dealer();
 
-    void attack();
+    sf::Uint16 get_damage() const;
+    void switch_mode();
+
+    virtual void update(sf::RenderWindow const& window, sf::Event const& event);
+    virtual void send_message(Message* message);
+
+    void attack(sf::Vector2i const& point);
+    void move_to(Cell* cell);
+
+    friend class Unit;
 };
 

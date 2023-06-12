@@ -50,8 +50,6 @@ Cell const& map::Map::get_cell(sf::Uint16 i) const {
 }
 
 void map::Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    this->draw_unit_position();
-
     for (auto cell : cells) {
         target.draw(cell);
     }

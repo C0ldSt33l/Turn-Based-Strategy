@@ -6,15 +6,14 @@
 class Unit;
 class Cell : public sf::Drawable {
     enum class Type {
-        EATHE,
-        WATER,
+        COMMON,
+        ONE_SHOT,
         WALL,
     };
 
     sf::Uint16 number;
     sf::RectangleShape rect;
     //static sf::Texture* texture;
-    bool has_object;
     Unit* unit;
 
 public:
@@ -22,7 +21,6 @@ public:
     Cell(sf::Vector2f size);
     virtual ~Cell();
 
-    void set_status(bool hasObject);
     void set_number(int number);
     void set_position(sf::Vector2f const& position);
     void set_position(int x, int y);
@@ -44,6 +42,7 @@ public:
 
     //static void play_animation();
     friend class Unit;
+    friend class DMG_Dealer;
 
 private:
     static sf::Uint16 generate_num();

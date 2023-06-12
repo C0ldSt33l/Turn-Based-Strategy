@@ -20,8 +20,8 @@ private:
     Cell* bound_point;
 
 public:
-    const static std::vector<sf::Int32> RECT;
-    const static std::vector<sf::Int32> LINE;
+    const static std::vector<sf::Int32> RECT_FORM;
+    const static std::vector<sf::Int32> LINE_FORM;
 
 public:
     Available_Zone();

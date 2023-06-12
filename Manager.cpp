@@ -2,6 +2,7 @@
 
 #include "Manager.h"
 #include "Map.h"
+#include "DMG_Dealer.h"
 
 
 Manager::Manager() {
@@ -14,19 +15,21 @@ Manager::Manager() {
 
     Message* msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new Unit("texture.png", &map::Map::get_instance()[0]));
+    msg->set_create(new DMG_Dealer());
+    msg->create.new_unit->move_to(&map::Map::get_instance()[0]);
     this->send_messange(msg);
 
+   msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(new DMG_Dealer());
+    msg->create.new_unit->move_to(&map::Map::get_instance()[8]);
+    this->send_messange(msg);
+    /*
     msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new Unit("texture.png", &map::Map::get_instance()[8]));
-    msg->create.new_unit->attack_zone.invert();
-    this->send_messange(msg);
-
-    msg = new Message;
-    msg->sender = nullptr;
-    msg->set_create(new Unit("texture.png", &map::Map::get_instance()[22]));
-    this->send_messange(msg);
+    msg->set_create(new DMG_Dealer());
+    msg->create.new_unit->move_to(&map::Map::get_instance()[22]);
+    this->send_messange(msg);*/
 }
 Manager::~Manager() {
     for (auto unit : this->units) {
@@ -61,10 +64,11 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
             this->units.push_back(cur_msg->create.new_unit);
         } break;
 
+        case Message::Type::SELECT:
         case Message::Type::UNSELECT:
-        case Message::Type::MOVE_UNIT:
-        case Message::Type::ATTACK:
-        case Message::Type::SELECT: {
+        case Message::Type::SWITCH_MODE:
+        case Message::Type::MOVE:
+        case Message::Type::DEAL_DMG: {
             for (auto unit : this->units) {
                 unit->send_message(cur_msg);
             }
