@@ -8,12 +8,12 @@ DMG_Dealer::~DMG_Dealer() {}
 sf::Uint16 DMG_Dealer::get_damage() const {
     return this->damage;
 }
-
 Available_Zone DMG_Dealer::get_attack_zone() const {
     return this->attack_zone;
 }
 
 void DMG_Dealer::set_attack_zone(std::vector<sf::Int32> const& form) {
+    this->attack_zone.set_form(form);
 }
 
 void DMG_Dealer::switch_mode() {

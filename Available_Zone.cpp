@@ -14,9 +14,7 @@ const std::vector<sf::Int32> Available_Zone::LINE_FORM = {
     1, 2, 3, 4, 5, 6, 7, 8
 };
 
-
 // METHODS
-//Available_Zone::Available_Zone() {}
 Available_Zone::Available_Zone(Cell* const position, Available_Zone::Type type) : type(type), bound_point(position) {
     switch (type) {
     case Available_Zone::Type::RECT:
@@ -32,13 +30,14 @@ Available_Zone::Available_Zone(Cell* const position, Available_Zone::Type type) 
     this->update(this->bound_point);
 }
 
-//Available_Zone::Available_Zone(Available_Zone const& zone) :
-//    type(zone.type), form(zone.form), cells(zone.cells), bound_point(zone.bound_point) {}
+void Available_Zone::set_form(std::vector<sf::Int32> const& form) {
+    this->form = form;
+    this->update(this->bound_point);
+}
 
 std::vector<Cell*>& Available_Zone::get_zone() {
     return this->cells;
 }
-
 bool Available_Zone::contain(Cell const* cell) const {
     for (auto c : this->cells) {
         if (cell == c)
@@ -47,7 +46,6 @@ bool Available_Zone::contain(Cell const* cell) const {
 
     return false;
 }
-
 void Available_Zone::update(Cell* position) {
     this->bound_point = position;
     std::vector<sf::Int32> idxs(this->form.size());
@@ -78,20 +76,7 @@ void Available_Zone::update(Cell* position) {
     
 }
 
-void Available_Zone::invert() {
-    switch (this->type) {
-    case Available_Zone::Type::RECT:
-        break;
-
-    case Available_Zone::Type::LINE:
-        for (int i = 0; i < this->form.size(); ++i) {
-            this->form[i] *= -1;
-        }
-        this->update(this->bound_point);
-        break;
-    }
-}
-
+// STATIC METHODS
 void Available_Zone::check_rect_form(std::vector<sf::Int32>& indexes) {
     sf::Int32 row = this->bound_point->get_row_number(),
               col = this->bound_point->get_col_number();
@@ -114,4 +99,23 @@ void Available_Zone::check_line_form(std::vector<sf::Int32>& indexes) {
             break;
         }
     }
+}
+
+std::vector<sf::Int32> Available_Zone::invert_form(Available_Zone::Type type) {
+    std::vector<sf::Int32> form;
+    
+    switch (type) {
+    case Available_Zone::Type::RECT:
+        form = Available_Zone::RECT_FORM;
+        break;
+
+    case Available_Zone::Type::LINE:
+        form = Available_Zone::LINE_FORM;
+        for (int i = 0; i < form.size(); ++i) {
+            form[i] *= -1;
+        }
+        break;
+    }
+
+    return form;
 }

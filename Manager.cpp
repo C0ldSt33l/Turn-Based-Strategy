@@ -8,13 +8,6 @@
 
 
 Manager::Manager() {
-    /*for (int i = 0; i < 4; i++) {
-        Message* msg = new Message;
-        msg->sender = nullptr;
-        msg->set_create(new Unit("texture.png", &map::Map::get_instance()[i * map::MAP_SIZE.x]));
-        this->send_messange(msg);
-    }*/
-
     Message* msg = new Message;
     msg->sender = nullptr;
     msg->set_create(new DMG_Dealer(&map::Map::get_instance()[0], &this->units));
@@ -22,7 +15,9 @@ Manager::Manager() {
 
     msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new DMG_Dealer(&map::Map::get_instance()[8], &this->units));
+    DMG_Dealer* unit = new DMG_Dealer(&map::Map::get_instance()[8], &this->units);
+    unit->set_attack_zone(Available_Zone::invert_form(Available_Zone::Type::LINE));
+    msg->set_create(unit);
     this->send_messange(msg);
 
     msg = new Message;
