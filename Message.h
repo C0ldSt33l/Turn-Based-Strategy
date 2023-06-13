@@ -13,12 +13,12 @@ struct Message {
         UNSELECT,
 
         SWITCH_MODE,
-
         MOVE,
         //ATTACK,
         DEAL_DMG,
         HEAL,
         BUFF,
+        DEBUFF,
     };
     Message::Type type;
     Unit* sender;
@@ -40,6 +40,7 @@ struct Message {
             Unit* who_to_attack;
         } take_dmg;
         struct {
+            sf::Uint16 heal;
             Unit* healer;
             Unit* who_to_heal;
         } heal;
@@ -58,7 +59,7 @@ struct Message {
     void set_kill(Unit* killer, Unit* who_to_kill);
     void set_move(Unit* unit, Cell* cell);
     void set_deal_dmg(Unit* attacker, Unit* who_to_attack, sf::Uint16 damage);
-    void set_heal(Unit* healer, Unit* who_to_heal);
+    void set_heal(sf::Uint16 heal, Unit* healer, Unit* who_to_heal);
     void set_buff(Unit* buffer, Unit* who_to_buff);
     void set_select(Unit* who_to_select);
 };

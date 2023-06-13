@@ -40,28 +40,28 @@ public:
 private:
     const sf::Uint16 id;
 
-protected:
+public:
     static sf::Clock input_colddown;
 
-    int max_hp,
-        cur_hp;
-    bool has_attacked,
-         has_moved;
+    sf::Int32 max_hp,
+              cur_hp;
+    bool has_action_point,
+         has_move_point;
 
     Cell* cell;
 
     sf::Texture texture;
     sf::Sprite sprite;
-
     sf::Sprite projection;
 
     Status status;
     Mode action_mode;
 
     Available_Zone move_zone;
+    std::list<Unit*>* targets;
 
 public:
-    Unit(std::string const file, int health = 100, Available_Zone::Type move_zone = Available_Zone::Type::RECT);
+    Unit(std::string const file, sf::Int32 health = 100, std::list<Unit*>* targets = nullptr, Available_Zone::Type move_zone = Available_Zone::Type::RECT);
     Unit(Unit const& unit);
     virtual ~Unit();
     Unit& operator=(Unit const& unit);
@@ -76,13 +76,14 @@ public:
     virtual void switch_mode() = 0;
 
     sf::Uint16 get_id() const;
+    sf::Int32 get_hp() const;
     sf::Vector2f get_position() const;
-    int get_cellNumber() const;
-    Status get_status() const;
+    Unit::Status get_status() const;
     sf::Texture get_texture() const;
 
     virtual void update(sf::RenderWindow const& window, sf::Event const& event) = 0;
     virtual void send_message(Message* message) = 0;    
+    //virtual void action(sf::Vector2i point) = 0;
 
     virtual void move_to(Cell* cell);
     void move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point);
@@ -96,5 +97,6 @@ private:
     static sf::Uint16 generate_id();
     static sf::Sprite set_sprite(sf::Texture const& texture, sf::Vector2f const& pos);
     static Unit* get_selected_unit();
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

@@ -31,9 +31,20 @@ void Game::update() {
 }
 
 void Game::draw() {
+    for (auto unit : Manager::get_instance().get_units()) {
+        std::cout << "Unit<" << unit->get_id() << "> has " << unit->get_hp() << "HP\n";
+    }
+    system("cls");
+    //if (Unit::celected_unit) {
+    //    std::cout << "Action point: " << Unit::celected_unit->has_action_point << '\n';
+    //    std::cout << "Move point: " << Unit::celected_unit->has_move_point << "\n\n";
+
+    //    //if (!Unit::celected_unit->has_move_point || !Unit::celected_unit->has_action_point)
+    //        //exit(1);
+    //}
+    //map::Map::get_instance().draw_unit_position();
     window.clear(sf::Color::White);
 
-    map::Map::get_instance().draw_unit_position();
     window.draw(map::Map::get_instance());
     Manager::get_instance().draw_units(window);
 

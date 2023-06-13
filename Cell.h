@@ -43,6 +43,8 @@ public:
     //static void play_animation();
     friend class Unit;
     friend class DMG_Dealer;
+    friend class Support;
+    friend class Healer;
 
 private:
     static sf::Uint16 generate_num();

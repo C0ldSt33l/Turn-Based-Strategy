@@ -3,6 +3,8 @@
 #include "Manager.h"
 #include "Map.h"
 #include "DMG_Dealer.h"
+#include "Healer.h"
+#include "Support.h"
 
 
 Manager::Manager() {
@@ -19,17 +21,23 @@ Manager::Manager() {
     msg->create.new_unit->move_to(&map::Map::get_instance()[0]);
     this->send_messange(msg);
 
-   msg = new Message;
+    msg = new Message;
     msg->sender = nullptr;
     msg->set_create(new DMG_Dealer());
     msg->create.new_unit->move_to(&map::Map::get_instance()[8]);
     this->send_messange(msg);
-    /*
+
     msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new DMG_Dealer());
+    msg->set_create(new Healer(&this->units));
+    msg->create.new_unit->move_to(&map::Map::get_instance()[16]);
+    this->send_messange(msg);
+    
+    msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(new Support());
     msg->create.new_unit->move_to(&map::Map::get_instance()[22]);
-    this->send_messange(msg);*/
+    this->send_messange(msg);
 }
 Manager::~Manager() {
     for (auto unit : this->units) {
@@ -68,7 +76,8 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
         case Message::Type::UNSELECT:
         case Message::Type::SWITCH_MODE:
         case Message::Type::MOVE:
-        case Message::Type::DEAL_DMG: {
+        case Message::Type::DEAL_DMG:
+        case Message::Type::HEAL: {
             for (auto unit : this->units) {
                 unit->send_message(cur_msg);
             }
@@ -81,6 +90,10 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
 }
 void Manager::send_messange(Message* message) {
     this->messages.push_back(message);
+}
+
+std::list<Unit*> const& Manager::get_units() const {
+    return this->units;
 }
 
 void Manager::draw_units(sf::RenderTarget& target) const {

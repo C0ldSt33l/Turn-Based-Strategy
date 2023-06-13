@@ -23,8 +23,9 @@ void Message::set_deal_dmg(Unit* attacker, Unit* who_to_attack, sf::Uint16 damag
     this->take_dmg.attacker = attacker;
     this->take_dmg.who_to_attack = who_to_attack;
 }
-void Message::set_heal(Unit* healer, Unit* who_to_heal) {
+void Message::set_heal(sf::Uint16 heal, Unit* healer, Unit* who_to_heal) {
     this->type = Message::Type::HEAL;
+    this->heal.heal = heal;
     this->heal.healer = healer;
     this->heal.who_to_heal = who_to_heal;
 }

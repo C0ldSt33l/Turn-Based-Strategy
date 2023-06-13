@@ -22,13 +22,19 @@
     <Filter Include="Unit">
       <UniqueIdentifier>{a1136f1b-0cad-4dfa-adc4-81ffd6d81ad7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Unit\DMG_Dealer">
+      <UniqueIdentifier>{57005bd3-21e4-463c-9b6b-1a2eab92dede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Healer">
+      <UniqueIdentifier>{23bbe597-6c1b-4fcc-a057-31c3d2c96de0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Support">
+      <UniqueIdentifier>{571b8ef4-812f-4a56-ba6f-af8049332fe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="Support.cpp">
-      <Filter>Unit</Filter>
     </ClCompile>
     <ClCompile Include="Unit.cpp">
       <Filter>Unit</Filter>
@@ -48,20 +54,23 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Manager</Filter>
     </ClCompile>
-    <ClCompile Include="DMG_Dealer.cpp">
-      <Filter>Unit</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="Available_Zone.cpp">
       <Filter>Unit</Filter>
     </ClCompile>
+    <ClCompile Include="DMG_Dealer.cpp">
+      <Filter>Unit\DMG_Dealer</Filter>
+    </ClCompile>
+    <ClCompile Include="Healer.cpp">
+      <Filter>Unit\Healer</Filter>
+    </ClCompile>
+    <ClCompile Include="Support.cpp">
+      <Filter>Unit\Support</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Support.h">
-      <Filter>Unit</Filter>
-    </ClInclude>
     <ClInclude Include="Unit.h">
       <Filter>Unit</Filter>
     </ClInclude>
@@ -80,14 +89,20 @@
     <ClInclude Include="ResourceManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="DMG_Dealer.h">
-      <Filter>Unit</Filter>
-    </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Available_Zone.h">
       <Filter>Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="DMG_Dealer.h">
+      <Filter>Unit\DMG_Dealer</Filter>
+    </ClInclude>
+    <ClInclude Include="Healer.h">
+      <Filter>Unit\Healer</Filter>
+    </ClInclude>
+    <ClInclude Include="Support.h">
+      <Filter>Unit\Support</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

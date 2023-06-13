@@ -20,6 +20,7 @@ public:
     void update(sf::RenderWindow const& window, sf::Event const& event);
     void send_messange(Message* message);
 
+    std::list<Unit*> const& get_units() const;
     void draw_units(sf::RenderTarget& target) const;
 
     static Manager& get_instance();

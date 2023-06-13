@@ -11,7 +11,7 @@ const std::vector<sf::Int32> Available_Zone::RECT_FORM = {
      map::MAP_SIZE.x - 1,  map::MAP_SIZE.x,  map::MAP_SIZE.x + 1,
 };
 const std::vector<sf::Int32> Available_Zone::LINE_FORM = {
-    2, 3, 4, 5, 6, 7, 8
+    1, 2, 3, 4, 5, 6, 7, 8
 };
 
 
