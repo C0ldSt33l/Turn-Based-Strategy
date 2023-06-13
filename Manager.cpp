@@ -8,7 +8,9 @@
 
 
 Manager::Manager() {
-    Message* msg = new Message;
+    Message* msg;
+        
+   /* msg = new Message;
     msg->sender = nullptr;
     msg->set_create(new DMG_Dealer(&map::Map::get_instance()[0], &this->units));
     this->send_messange(msg);
@@ -23,7 +25,7 @@ Manager::Manager() {
     msg = new Message;
     msg->sender = nullptr;
     msg->set_create(new DMG_Dealer(&map::Map::get_instance()[7], &this->units));
-    this->send_messange(msg);
+    this->send_messange(msg);*/
 
     msg = new Message;
     msg->sender = nullptr;

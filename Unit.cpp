@@ -104,7 +104,7 @@ void Unit::make_unselected() {
 }
 
 void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
-    if (!Unit::celected_unit && DMG_Dealer::input_colddown.getElapsedTime().asMilliseconds() >= 250) {
+    if (!Unit::celected_unit && Unit::input_colddown.getElapsedTime().asMilliseconds() >= 250) {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->cell->contains(sf::Mouse::getPosition(window))) {
             Message* msg = new Message;
             msg->sender = this;

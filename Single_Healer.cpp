@@ -2,9 +2,7 @@
 #include "Manager.h"
 
 
-Single_Healer::Single_Healer(Cell* cell, std::list<Unit*>* targets) : Healer("textures//hakumen.png", cell, targets) {
-    this->heal = 50;
-}
+Single_Healer::Single_Healer(Cell* cell, std::list<Unit*>* targets) : Healer("textures//hakumen.png", 50, cell, targets) {}
 Single_Healer::~Single_Healer() {}
 
 void Single_Healer::action(sf::Vector2i const& point) {

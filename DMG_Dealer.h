@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Unit.h"
+#include "Available_Zone.h"
 
 
 class DMG_Dealer : public Unit {
@@ -9,7 +10,7 @@ protected:
     Available_Zone attack_zone;
 
 public:
-    DMG_Dealer(Cell* cell, std::list<Unit*>* targets);
+    DMG_Dealer(std::string const file, sf::Uint16 damage, Cell* cell, std::list<Unit*>* targets, Available_Zone::Type attack_zone);
     virtual ~DMG_Dealer();
 
     sf::Uint16 get_damage() const;
@@ -20,6 +21,6 @@ public:
     void send_message(Message* message);
 
     void switch_mode();
-    virtual void action(sf::Vector2i const& point);
+    virtual void action(sf::Vector2i const& point) = 0;
 };
 

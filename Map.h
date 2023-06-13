@@ -39,5 +39,7 @@ namespace map {
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+
+        void load_from_file(std::string const& file);
     };
 }

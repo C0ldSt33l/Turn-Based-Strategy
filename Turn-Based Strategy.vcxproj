@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Aoe_DMG_Dealer.cpp" />
     <ClCompile Include="Aoe_Healer.cpp" />
     <ClCompile Include="Available_Zone.cpp" />
     <ClCompile Include="Cell.cpp" />
@@ -146,11 +147,13 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Message.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Single_DMG_Dealer.cpp" />
     <ClCompile Include="Single_Healer.cpp" />
     <ClCompile Include="Support.cpp" />
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Aoe_DMG_Dealer.h" />
     <ClInclude Include="Aoe_Healer.h" />
     <ClInclude Include="Available_Zone.h" />
     <ClInclude Include="Cell.h" />
@@ -161,6 +164,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Message.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Single_DMG_Dealer.h" />
     <ClInclude Include="Single_Healer.h" />
     <ClInclude Include="Support.h" />
     <ClInclude Include="Unit.h" />

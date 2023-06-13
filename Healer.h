@@ -8,7 +8,7 @@ protected:
     sf::Uint16 heal;
 
 public:
-    using Support::Support;
+    Healer(std::string const file, sf::Uint16 heal, Cell* cell, std::list<Unit*>* targets);
     ~Healer();
 
     sf::Uint16 get_heal() const;

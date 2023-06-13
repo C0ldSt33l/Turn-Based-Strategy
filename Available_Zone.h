@@ -36,4 +36,3 @@ private:
     void check_rect_form(std::vector<sf::Int32>& indexes);
     void check_line_form(std::vector<sf::Int32>& indexes);
 };
-

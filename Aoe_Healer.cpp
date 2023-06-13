@@ -1,9 +1,7 @@
 #include "Aoe_Healer.h"
 #include "Manager.h"
 
-Aoe_Healer::Aoe_Healer(Cell* cell, std::list<Unit*>* targets) : Healer("textures//tager.png", cell, targets) {
-    this->heal = 10;
-}
+Aoe_Healer::Aoe_Healer(Cell* cell, std::list<Unit*>* targets) : Healer("textures//tager.png", 10, cell, targets) {}
 Aoe_Healer::~Aoe_Healer() {}
 
 void Aoe_Healer::action(sf::Vector2i const& point) {

@@ -54,3 +54,6 @@ void map::Map::draw(sf::RenderTarget& target, sf::RenderStates states) const {
         target.draw(cell);
     }
 }
+
+void map::Map::load_from_file(std::string const& file) {
+}

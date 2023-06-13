@@ -1,8 +1,8 @@
 #include "DMG_Dealer.h"
-#include "Manager.h"
 
 
-DMG_Dealer::DMG_Dealer(Cell* cell, std::list<Unit*>* targets) : Unit("textures//naoto.png", cell, 100, targets), damage(50), attack_zone(this->cell, Available_Zone::Type::LINE) {}
+DMG_Dealer::DMG_Dealer(std::string const file, sf::Uint16 damage, Cell* cell, std::list<Unit*>* targets, Available_Zone::Type attack_zone) :
+    Unit(file, cell, 100, targets), damage(damage), attack_zone(cell, attack_zone) {}
 DMG_Dealer::~DMG_Dealer() {}
 
 sf::Uint16 DMG_Dealer::get_damage() const {
@@ -98,25 +98,4 @@ void DMG_Dealer::send_message(Message* message) {
     }
 
     this->input_colddown.restart();
-}
-
-void DMG_Dealer::action(sf::Vector2i const& point) {
-    if (!this->has_action_point) return;
-
-    for (auto cell : this->attack_zone.get_zone()) {
-        if (cell && cell->unit && cell->contains(point) && this->is_target(cell->unit)) {
-            Message* msg = new Message;
-            msg->sender = this;
-            msg->set_deal_dmg(this, cell->unit, this->damage);
-            Manager::get_instance().send_messange(msg);
-
-            break;
-        }
-    }
-
-    this->has_action_point = false;
-    for (auto cell : this->attack_zone.get_zone()) {
-        if (!cell) continue;
-        cell->set_color(CELL_FILL_COLOR);
-    }
 }
