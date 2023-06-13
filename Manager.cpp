@@ -17,26 +17,17 @@ Manager::Manager() {
 
     Message* msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new DMG_Dealer());
-    msg->create.new_unit->move_to(&map::Map::get_instance()[0]);
+    msg->set_create(new DMG_Dealer(&map::Map::get_instance()[0], &this->units));
     this->send_messange(msg);
 
     msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new DMG_Dealer());
-    msg->create.new_unit->move_to(&map::Map::get_instance()[8]);
+    msg->set_create(new DMG_Dealer(&map::Map::get_instance()[8], &this->units));
     this->send_messange(msg);
 
     msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new Healer(&this->units));
-    msg->create.new_unit->move_to(&map::Map::get_instance()[16]);
-    this->send_messange(msg);
-    
-    msg = new Message;
-    msg->sender = nullptr;
-    msg->set_create(new Support());
-    msg->create.new_unit->move_to(&map::Map::get_instance()[22]);
+    msg->set_create(new Healer(&map::Map::get_instance()[22], &this->units));
     this->send_messange(msg);
 }
 Manager::~Manager() {

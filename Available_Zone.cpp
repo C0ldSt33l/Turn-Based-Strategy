@@ -7,7 +7,7 @@
 // MEMBERS
 const std::vector<sf::Int32> Available_Zone::RECT_FORM = {
     -map::MAP_SIZE.x - 1, -map::MAP_SIZE.x, -map::MAP_SIZE.x + 1,
-             -1         ,         0       ,           1         ,
+             -1                           ,           1         ,
      map::MAP_SIZE.x - 1,  map::MAP_SIZE.x,  map::MAP_SIZE.x + 1,
 };
 const std::vector<sf::Int32> Available_Zone::LINE_FORM = {
@@ -16,7 +16,7 @@ const std::vector<sf::Int32> Available_Zone::LINE_FORM = {
 
 
 // METHODS
-Available_Zone::Available_Zone() {}
+//Available_Zone::Available_Zone() {}
 Available_Zone::Available_Zone(Cell* const position, Available_Zone::Type type) : type(type), bound_point(position) {
     switch (type) {
     case Available_Zone::Type::RECT:
@@ -29,8 +29,11 @@ Available_Zone::Available_Zone(Cell* const position, Available_Zone::Type type) 
     }
 
     this->cells.resize(this->form.size());
-    //this->update(this->bound_point);
+    this->update(this->bound_point);
 }
+
+//Available_Zone::Available_Zone(Available_Zone const& zone) :
+//    type(zone.type), form(zone.form), cells(zone.cells), bound_point(zone.bound_point) {}
 
 std::vector<Cell*>& Available_Zone::get_zone() {
     return this->cells;

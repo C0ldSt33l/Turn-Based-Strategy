@@ -47,7 +47,7 @@ struct Message {
         struct {
             Unit* buffer;
             Unit* who_to_buff;
-        } buff;
+        } action;
         struct {
             Unit* who_to_select;
         } select;

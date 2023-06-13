@@ -7,23 +7,25 @@
 sf::Clock Unit::input_colddown;
 Unit*     Unit::celected_unit = nullptr;
 
-Unit::Unit(std::string const file, sf::Int32 health, std::list<Unit*>* targets, Available_Zone::Type move_zone) :
-    Drawable(), id(generate_id()), cell(nullptr), targets(targets), cur_hp(health), max_hp(health), status(Status::NONE),
+Unit::Unit(std::string const file, Cell* cell, sf::Int32 health, std::list<Unit*>* targets, Available_Zone::Type move_zone) :
+    Drawable(), id(generate_id()), cell(cell), targets(targets), cur_hp(health), max_hp(health), status(Status::NONE),
     move_zone(cell, move_zone) {
     if (!this->texture.loadFromFile(file)) {
         exit(1);
     }
-    this->sprite = Unit::set_sprite(this->texture, sf::Vector2f()/*cell->get_position()*/);
+    this->cell->unit = this;
+    this->sprite = Unit::set_sprite(this->texture, cell->get_position());
 
     this->projection = this->sprite;
     this->projection.setColor(SEMI_TRANSPARENT_COLOR);
+
 
     this->action_mode = Unit::Mode::MOVING;
     this->has_action_point = this->has_move_point = true;
 }
 Unit::Unit(Unit const& unit) :
     sf::Drawable(), id(Unit::generate_id()), cur_hp(unit.cur_hp), max_hp(unit.max_hp), texture(unit.texture),
-    sprite(unit.sprite), status(unit.status) {
+    sprite(unit.sprite), status(unit.status), move_zone(unit.move_zone) {
     this->sprite.setTexture(this->texture);
 }
 Unit::~Unit() {
@@ -52,24 +54,6 @@ void Unit::set_texture(sf::Texture const&) {
 void Unit::set_sprite_color(sf::Color const& color) {
     this->sprite.setColor(color);
 }
-void Unit::make_selected() {
-    this->celected_unit = this;
-    this->celected_unit->set_sprite_color(SELECT_COLOR);
-
-    for (auto cell : this->move_zone.get_zone()) {
-        if (!cell || cell == this->cell) continue;
-        cell->set_color(SEMI_TRANSPARENT_COLOR);
-    }
-}
-void Unit::make_unselected() {
-    Unit::celected_unit->action_mode = Unit::Mode::MOVING;
-    Unit::celected_unit->has_action_point = Unit::celected_unit->has_move_point = true;
-    
-    Unit::celected_unit->set_sprite_color(DEFAULT_COLOR);
-    Unit::celected_unit->projection.setPosition(Unit::celected_unit->sprite.getPosition());
-    
-    Unit::celected_unit = nullptr;
-}
 
 sf::Uint16 Unit::get_id() const {
     return this->id;
@@ -86,6 +70,77 @@ Unit::Status Unit::get_status() const {
 sf::Texture Unit::get_texture() const {
     return this->texture;
 }
+bool Unit::is_target(Unit const* unit) {
+    for (auto target : *this->targets) {
+        if (unit == target)
+            return true;
+    }
+
+    return false;
+}
+
+void Unit::make_selected() {
+    this->celected_unit = this;
+    this->celected_unit->set_sprite_color(SELECT_COLOR);
+
+    for (auto cell : this->move_zone.get_zone()) {
+        if (!cell || cell == this->cell) continue;
+        cell->set_color(SEMI_TRANSPARENT_COLOR);
+    }
+}
+void Unit::make_unselected() {
+    Unit::celected_unit->action_mode = Unit::Mode::MOVING;
+    Unit::celected_unit->has_action_point = Unit::celected_unit->has_move_point = true;
+
+    Unit::celected_unit->set_sprite_color(DEFAULT_COLOR);
+    Unit::celected_unit->projection.setPosition(Unit::celected_unit->sprite.getPosition());
+
+    for (auto cell : Unit::celected_unit->move_zone.get_zone()) {
+        if (!cell) continue;
+        cell->set_color(CELL_FILL_COLOR);
+    }
+
+    Unit::celected_unit = nullptr;
+}
+
+void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
+    if (!Unit::celected_unit && DMG_Dealer::input_colddown.getElapsedTime().asMilliseconds() >= 250) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->cell->contains(sf::Mouse::getPosition(window))) {
+            Message* msg = new Message;
+            msg->sender = this;
+            msg->set_select(this);
+            Manager::get_instance().send_messange(msg);
+        }
+
+        return;
+    }
+
+    if (this != Unit::celected_unit) return;
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || !this->has_action_point || !this->has_move_point && !this->has_action_point) {
+        Message* msg = new Message;
+        msg->type = Message::Type::UNSELECT;
+        msg->sender = msg->select.who_to_select = this;
+        Manager::get_instance().send_messange(msg);
+    }
+
+    if (Unit::input_colddown.getElapsedTime().asSeconds() > 0.3) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
+            Message* msg = new Message;
+            msg->sender = this;
+            msg->set_select(this);
+            msg->type = Message::Type::SWITCH_MODE;
+            Manager::get_instance().send_messange(msg);
+        }
+
+        if (Unit::Mode::MOVING == this->action_mode) {
+            this->move_by_mouse(event.mouseButton.button, sf::Mouse::getPosition(window));
+        }
+        else if (Unit::Mode::TAKING_ACTION == this->action_mode && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            this->action(sf::Mouse::getPosition(window));
+        }
+    }
+}
 
 void Unit::move_to(Cell* cell) {
     for (auto cell : this->move_zone.get_zone()) {
@@ -93,7 +148,7 @@ void Unit::move_to(Cell* cell) {
         cell->set_color(CELL_FILL_COLOR);
     }
 
-    if (this->cell) this->cell->make_empty();
+    this->cell->make_empty();
     this->cell = cell;
     this->cell->unit = this;
 
@@ -189,9 +244,9 @@ Unit* Unit::get_selected_unit() {
 sf::Sprite Unit::set_sprite(sf::Texture const& texture, sf::Vector2f const& pos) {
     sf::Sprite sprite(texture);
     sprite.setOrigin((sf::Vector2f)texture.getSize() / 2.0f);
+    sprite.setPosition(pos);
     sprite.setScale(map::CELL_SIZE.x / (float)texture.getSize().x,
                     map::CELL_SIZE.y / (float)texture.getSize().y);
-    //sprite.setPosition(pos);
 
     return sprite;
 }

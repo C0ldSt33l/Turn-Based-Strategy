@@ -9,18 +9,17 @@ protected:
     Available_Zone attack_zone;
 
 public:
-    DMG_Dealer();
+    DMG_Dealer(Cell* cell, std::list<Unit*>* targets);
     virtual ~DMG_Dealer();
 
     sf::Uint16 get_damage() const;
+    Available_Zone get_attack_zone() const;
 
-    virtual void update(sf::RenderWindow const& window, sf::Event const& event);
-    virtual void send_message(Message* message);
+    void set_attack_zone(std::vector<sf::Int32> const& form);
+
+    void send_message(Message* message);
 
     void switch_mode();
-    void attack(sf::Vector2i const& point);
-    void move_to(Cell* cell);
-
-    friend class Unit;
+    virtual void action(sf::Vector2i const& point);
 };
 

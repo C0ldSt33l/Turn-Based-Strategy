@@ -31,8 +31,8 @@ void Message::set_heal(sf::Uint16 heal, Unit* healer, Unit* who_to_heal) {
 }
 void Message::set_buff(Unit* buffer, Unit* who_to_buff) {
     this->type = Message::Type::BUFF;
-    this->buff.buffer = buffer;
-    this->buff.who_to_buff = who_to_buff;
+    this->action.buffer = buffer;
+    this->action.who_to_buff = who_to_buff;
 }
 void Message::set_select(Unit* who_to_select) {
     this->type = Message::Type::SELECT;

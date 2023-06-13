@@ -24,8 +24,9 @@ public:
     const static std::vector<sf::Int32> LINE_FORM;
 
 public:
-    Available_Zone();
+    //Available_Zone();
     Available_Zone(Cell* const position, Available_Zone::Type type);
+    //Available_Zone(Available_Zone const& zone);
 
     std::vector<Cell*>& get_zone();
     bool contain(Cell const* cell) const;
@@ -35,5 +36,7 @@ public:
 private:
     void check_rect_form(std::vector<sf::Int32>& indexes);
     void check_line_form(std::vector<sf::Int32>& indexes);
+
+
 };
 

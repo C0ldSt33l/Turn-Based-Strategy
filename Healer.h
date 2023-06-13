@@ -1,22 +1,18 @@
 #pragma once
 
-#include "Unit.h"
+#include "Support.h"
 
 
-class Healer : public Unit{
+class Healer : public Support {
 protected:
     sf::Uint16 heal;
 
 public:
-    Healer(std::list<Unit*>* targets = nullptr);
+    Healer(Cell* cell, std::list<Unit*>* targets);
     ~Healer();
 
     sf::Uint16 get_heal() const;
 
-    virtual void update(sf::RenderWindow const& window, sf::Event const& event);
-    virtual void send_message(Message* message);
-
-    virtual void switch_mode();
-    void healing(sf::Vector2i point);
+    void action(sf::Vector2i const& point);
 };
 

@@ -8,12 +8,11 @@ protected:
     
 
 public:
-    Support();
+    Support(std::string const file, Cell* cell, std::list<Unit*>* targets = nullptr);
     virtual ~Support();
 
-    virtual void update(sf::RenderWindow const& window, sf::Event const& event);
-    virtual void send_message(Message* message);
+    void send_message(Message* message);
 
-    virtual void switch_mode();
-    void buff();
+    void switch_mode();
+    virtual void action(sf::Vector2i const& point);
 };

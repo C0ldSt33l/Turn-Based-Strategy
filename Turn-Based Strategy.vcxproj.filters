@@ -25,11 +25,11 @@
     <Filter Include="Unit\DMG_Dealer">
       <UniqueIdentifier>{57005bd3-21e4-463c-9b6b-1a2eab92dede}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Unit\Healer">
-      <UniqueIdentifier>{23bbe597-6c1b-4fcc-a057-31c3d2c96de0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Unit\Support">
       <UniqueIdentifier>{571b8ef4-812f-4a56-ba6f-af8049332fe1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Unit\Support\Healer">
+      <UniqueIdentifier>{23bbe597-6c1b-4fcc-a057-31c3d2c96de0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,7 +64,7 @@
       <Filter>Unit\DMG_Dealer</Filter>
     </ClCompile>
     <ClCompile Include="Healer.cpp">
-      <Filter>Unit\Healer</Filter>
+      <Filter>Unit\Support\Healer</Filter>
     </ClCompile>
     <ClCompile Include="Support.cpp">
       <Filter>Unit\Support</Filter>
@@ -99,7 +99,7 @@
       <Filter>Unit\DMG_Dealer</Filter>
     </ClInclude>
     <ClInclude Include="Healer.h">
-      <Filter>Unit\Healer</Filter>
+      <Filter>Unit\Support\Healer</Filter>
     </ClInclude>
     <ClInclude Include="Support.h">
       <Filter>Unit\Support</Filter>

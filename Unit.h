@@ -61,7 +61,7 @@ public:
     std::list<Unit*>* targets;
 
 public:
-    Unit(std::string const file, sf::Int32 health = 100, std::list<Unit*>* targets = nullptr, Available_Zone::Type move_zone = Available_Zone::Type::RECT);
+    Unit(std::string const file, Cell* cell, sf::Int32 health = 100, std::list<Unit*>* targets = nullptr, Available_Zone::Type move_zone = Available_Zone::Type::RECT);
     Unit(Unit const& unit);
     virtual ~Unit();
     Unit& operator=(Unit const& unit);
@@ -71,6 +71,7 @@ public:
     void set_status(Status status);
     void set_texture(sf::Texture const& texture);
     void set_sprite_color(sf::Color const& color);
+
     void make_selected();
     void make_unselected();
     virtual void switch_mode() = 0;
@@ -80,12 +81,13 @@ public:
     sf::Vector2f get_position() const;
     Unit::Status get_status() const;
     sf::Texture get_texture() const;
+    bool is_target(Unit const* unit);
 
-    virtual void update(sf::RenderWindow const& window, sf::Event const& event) = 0;
-    virtual void send_message(Message* message) = 0;    
-    //virtual void action(sf::Vector2i point) = 0;
+    void update(sf::RenderWindow const& window, sf::Event const& event);
+    virtual void send_message(Message* message) = 0;
+    virtual void action(sf::Vector2i const& point) = 0;
 
-    virtual void move_to(Cell* cell);
+    void move_to(Cell* cell);
     void move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point);
     void move_by_keyboard(sf::Keyboard::Key const& key);
     void move_projection(Cell const* cell);

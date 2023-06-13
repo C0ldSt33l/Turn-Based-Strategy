@@ -9,9 +9,9 @@
 namespace map {
     const sf::Vector2i        MAP_SIZE              { 9, 7 };
 
-    static const sf::Vector2f CELL_SIZE             { 75, 75 };
+    static const sf::Vector2f CELL_SIZE             { 65, 65 };
     static const float        CELL_OUTLINE_THICKNESS{ 5 };
-    static const sf::Vector2f START_POS             { 80, 60 };
+    static const sf::Vector2f START_POS             { 130, 40 };
     static const int          CELL_COUNT            { MAP_SIZE.x * MAP_SIZE.y };
 
     #define CELL_FILL_COLOR    sf::Color::Green

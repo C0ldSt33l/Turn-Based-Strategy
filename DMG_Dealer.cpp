@@ -2,15 +2,22 @@
 #include "Manager.h"
 
 
-DMG_Dealer::DMG_Dealer() : Unit("textures//naoto.png"), damage(50), attack_zone(this->cell, Available_Zone::Type::LINE) {}
+DMG_Dealer::DMG_Dealer(Cell* cell, std::list<Unit*>* targets) : Unit("textures//naoto.png", cell, 100, targets), damage(50), attack_zone(this->cell, Available_Zone::Type::LINE) {}
 DMG_Dealer::~DMG_Dealer() {}
 
 sf::Uint16 DMG_Dealer::get_damage() const {
     return this->damage;
 }
 
+Available_Zone DMG_Dealer::get_attack_zone() const {
+    return this->attack_zone;
+}
+
+void DMG_Dealer::set_attack_zone(std::vector<sf::Int32> const& form) {
+}
+
 void DMG_Dealer::switch_mode() {
-    if (this->action_mode == Unit::Mode::MOVING) {
+    if (Unit::Mode::MOVING == this->action_mode) {
         this->action_mode = Unit::Mode::TAKING_ACTION;
 
         this->projection.setPosition(this->sprite.getPosition());
@@ -37,43 +44,6 @@ void DMG_Dealer::switch_mode() {
     }
 }
 
-void DMG_Dealer::update(sf::RenderWindow const& window, sf::Event const& event) {
-    if (!Unit::celected_unit && DMG_Dealer::input_colddown.getElapsedTime().asMilliseconds() >= 250) {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->cell->contains(sf::Mouse::getPosition(window))) {
-            Message* msg = new Message;
-            msg->sender = this;
-            msg->set_select(this);
-            Manager::get_instance().send_messange(msg);
-        }
-
-        return;
-    }
-
-    if (this != Unit::celected_unit || DMG_Dealer::input_colddown.getElapsedTime().asSeconds() <= 0.3)
-        return;
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || !this->has_action_point || !this->has_move_point && !this->has_action_point) {
-        Message* msg = new Message;
-        msg->type = Message::Type::UNSELECT;
-        msg->sender = msg->select.who_to_select = this;
-        Manager::get_instance().send_messange(msg);
-    }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R)) {
-        Message* msg = new Message;
-        msg->sender = this;
-        msg->set_select(this);
-        msg->type = Message::Type::SWITCH_MODE;
-        Manager::get_instance().send_messange(msg);
-    }
-
-    if (this->action_mode == Unit::Mode::MOVING) {
-        this->move_by_mouse(event.mouseButton.button, sf::Mouse::getPosition(window));
-    }
-    else if (this->action_mode == Unit::Mode::TAKING_ACTION && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        this->attack(sf::Mouse::getPosition(window));
-    }
-}
 void DMG_Dealer::send_message(Message* message) {
     switch (message->type) {
     case Message::Type::SELECT:
@@ -85,6 +55,10 @@ void DMG_Dealer::send_message(Message* message) {
     case Message::Type::UNSELECT:
         if (this == message->select.who_to_select) {
             this->make_unselected();
+            for (auto cell : this->get_attack_zone().get_zone()) {
+                if (!cell) continue;
+                cell->set_color(CELL_FILL_COLOR);
+            }
         }
         break;
 
@@ -103,13 +77,20 @@ void DMG_Dealer::send_message(Message* message) {
     case Message::Type::MOVE:
         if (this == message->move.who_to_move) {
             this->move_to(message->move.destination);
+            this->attack_zone.update(this->cell);
         }
         break;
-
     case Message::Type::SWITCH_MODE:
+
         if (this == message->select.who_to_select) {
             this->switch_mode();
         }
+        break;
+
+    case Message::Type::BUFF:
+        break;
+
+    case Message::Type::DEBUFF:
         break;
 
     default:
@@ -119,11 +100,11 @@ void DMG_Dealer::send_message(Message* message) {
     this->input_colddown.restart();
 }
 
-void DMG_Dealer::attack(sf::Vector2i const& point) {
+void DMG_Dealer::action(sf::Vector2i const& point) {
     if (!this->has_action_point) return;
 
     for (auto cell : this->attack_zone.get_zone()) {
-        if (cell && cell->unit && cell->contains(point)) {
+        if (cell && cell->unit && cell->contains(point) && this->is_target(cell->unit)) {
             Message* msg = new Message;
             msg->sender = this;
             msg->set_deal_dmg(this, cell->unit, this->damage);
@@ -138,21 +119,4 @@ void DMG_Dealer::attack(sf::Vector2i const& point) {
         if (!cell) continue;
         cell->set_color(CELL_FILL_COLOR);
     }
-}
-
-void DMG_Dealer::move_to(Cell* cell) {
-    for (auto cell : this->move_zone.get_zone()) {
-        if (!cell || cell == this->cell) continue;
-        cell->set_color(CELL_FILL_COLOR);
-    }
-
-    if (this->cell) this->cell->make_empty();
-    this->cell = cell;
-    this->cell->unit = this;
-
-    this->sprite.setPosition(cell->get_position());
-    this->projection.setPosition(cell->get_position());
-
-    this->move_zone.update(cell);
-    this->attack_zone.update(cell);
 }
