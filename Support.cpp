@@ -80,7 +80,4 @@ void Support::switch_mode() {
         }
     }
 }
-void Support::action(sf::Vector2i const& point) {
-    
-}
 

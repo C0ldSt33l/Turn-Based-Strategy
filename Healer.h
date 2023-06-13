@@ -8,11 +8,11 @@ protected:
     sf::Uint16 heal;
 
 public:
-    Healer(Cell* cell, std::list<Unit*>* targets);
+    using Support::Support;
     ~Healer();
 
     sf::Uint16 get_heal() const;
 
-    void action(sf::Vector2i const& point);
+    virtual void action(sf::Vector2i const& point) = 0;
 };
 

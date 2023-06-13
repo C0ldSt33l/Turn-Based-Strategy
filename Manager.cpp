@@ -3,8 +3,8 @@
 #include "Manager.h"
 #include "Map.h"
 #include "DMG_Dealer.h"
-#include "Healer.h"
-#include "Support.h"
+#include "Aoe_Healer.h"
+#include "Single_Healer.h"
 
 
 Manager::Manager() {
@@ -27,7 +27,17 @@ Manager::Manager() {
 
     msg = new Message;
     msg->sender = nullptr;
-    msg->set_create(new Healer(&map::Map::get_instance()[22], &this->units));
+    msg->set_create(new DMG_Dealer(&map::Map::get_instance()[7], &this->units));
+    this->send_messange(msg);
+
+    msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(new Aoe_Healer(&map::Map::get_instance()[22], &this->units));
+    this->send_messange(msg);
+
+    msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(new Single_Healer(&map::Map::get_instance()[21], &this->units));
     this->send_messange(msg);
 }
 Manager::~Manager() {

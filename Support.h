@@ -8,11 +8,11 @@ protected:
     
 
 public:
-    Support(std::string const file, Cell* cell, std::list<Unit*>* targets = nullptr);
+    Support(std::string const file, Cell* cell, std::list<Unit*>* targets);
     virtual ~Support();
 
     void send_message(Message* message);
 
     void switch_mode();
-    virtual void action(sf::Vector2i const& point);
+    virtual void action(sf::Vector2i const& point) = 0;
 };

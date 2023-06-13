@@ -69,6 +69,12 @@
     <ClCompile Include="Support.cpp">
       <Filter>Unit\Support</Filter>
     </ClCompile>
+    <ClCompile Include="Aoe_Healer.cpp">
+      <Filter>Unit\Support\Healer</Filter>
+    </ClCompile>
+    <ClCompile Include="Single_Healer.cpp">
+      <Filter>Unit\Support\Healer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Unit.h">
@@ -103,6 +109,12 @@
     </ClInclude>
     <ClInclude Include="Support.h">
       <Filter>Unit\Support</Filter>
+    </ClInclude>
+    <ClInclude Include="Aoe_Healer.h">
+      <Filter>Unit\Support\Healer</Filter>
+    </ClInclude>
+    <ClInclude Include="Single_Healer.h">
+      <Filter>Unit\Support\Healer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

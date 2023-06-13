@@ -40,7 +40,7 @@ public:
 private:
     const sf::Uint16 id;
 
-public:
+protected:
     static sf::Clock input_colddown;
 
     sf::Int32 max_hp,
@@ -94,6 +94,10 @@ public:
 
     void take_damage(Unit* attacker, sf::Uint16 damage);
     void take_heal(Unit* healer, sf::Uint16 heal);
+
+    friend class Support;
+    friend class Aoe_Healer;
+    friend class Single_Healer;
 
 private:
     static sf::Uint16 generate_id();
