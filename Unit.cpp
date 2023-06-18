@@ -8,8 +8,7 @@ sf::Clock Unit::input_colddown;
 Unit*     Unit::celected_unit = nullptr;
 
 Unit::Unit(std::string const file, Cell* cell, sf::Int32 health, std::list<Unit*>* targets, Available_Zone::Type move_zone) :
-    Drawable(), id(generate_id()), cell(cell), targets(targets), cur_hp(health), max_hp(health), status(Status::NONE),
-    move_zone(cell, move_zone) {
+    Drawable(), id(generate_id()), cell(cell), targets(targets), cur_hp(health), max_hp(health), move_zone(cell, move_zone) {
     if (!this->texture.loadFromFile(file)) {
         exit(1);
     }
@@ -25,7 +24,7 @@ Unit::Unit(std::string const file, Cell* cell, sf::Int32 health, std::list<Unit*
 }
 Unit::Unit(Unit const& unit) :
     sf::Drawable(), id(Unit::generate_id()), cur_hp(unit.cur_hp), max_hp(unit.max_hp), texture(unit.texture),
-    sprite(unit.sprite), status(unit.status), move_zone(unit.move_zone) {
+    sprite(unit.sprite), move_zone(unit.move_zone) {
     this->sprite.setTexture(this->texture);
 }
 Unit::~Unit() {
@@ -45,9 +44,6 @@ void Unit::set_position(sf::Vector2f const& position) {
 void Unit::set_position(int x, int y) {
     this->sprite.setPosition(x, y);
 }
-void Unit::set_status(Status status) {
-    this->status = status;
-}
 void Unit::set_texture(sf::Texture const&) {
     this->texture = texture;
 }
@@ -61,16 +57,29 @@ sf::Uint16 Unit::get_id() const {
 sf::Int32 Unit::get_hp() const {
     return this->cur_hp;
 }
+sf::Int32 Unit::get_max_hp() const {
+    return this->max_hp;
+}
+Unit::Team Unit::get_team() const {
+    return this->team;
+}
+bool Unit::get_action_point() const {
+    return this->has_action_point;
+}
+bool Unit::get_move_point() const {
+    return this->has_move_point;
+}
 sf::Vector2f Unit::get_position() const {
     return this->sprite.getPosition();
-}
-Unit::Status Unit::get_status() const {
-    return this->status;
 }
 sf::Texture Unit::get_texture() const {
     return this->texture;
 }
-bool Unit::is_target(Unit const* unit) {
+
+bool Unit::has_any_points() const {
+    return this->has_action_point || this->has_move_point;
+}
+bool Unit::is_target(Unit const* unit) const {
     for (auto target : *this->targets) {
         if (unit == target)
             return true;
@@ -90,7 +99,7 @@ void Unit::make_selected() {
 }
 void Unit::make_unselected() {
     Unit::celected_unit->action_mode = Unit::Mode::MOVING;
-    Unit::celected_unit->has_action_point = Unit::celected_unit->has_move_point = true;
+    //Unit::celected_unit->has_action_point = Unit::celected_unit->has_move_point = true;
 
     Unit::celected_unit->set_sprite_color(DEFAULT_COLOR);
     Unit::celected_unit->projection.setPosition(Unit::celected_unit->sprite.getPosition());
@@ -101,6 +110,9 @@ void Unit::make_unselected() {
     }
 
     Unit::celected_unit = nullptr;
+}
+void Unit::reset_points() {
+    this->has_action_point = this->has_move_point = true;
 }
 
 void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
@@ -117,7 +129,7 @@ void Unit::update(sf::RenderWindow const& window, sf::Event const& event) {
 
     if (this != Unit::celected_unit) return;
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || !this->has_action_point || !this->has_move_point && !this->has_action_point) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
         Message* msg = new Message;
         msg->type = Message::Type::UNSELECT;
         msg->sender = msg->select.who_to_select = this;
@@ -254,4 +266,13 @@ sf::Sprite Unit::set_sprite(sf::Texture const& texture, sf::Vector2f const& pos)
 void Unit::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(this->projection);
     target.draw(this->sprite);
+}
+
+std::ostream& operator<<(std::ostream& out, Unit const& unit) {
+    out << "Unit<" << unit.get_id() << ">:\n";
+    //out << "Hp: " << unit.get_hp() << "of" << unit.get_max_hp() << '\n';
+    //out << "Action point: " << unit.get_action_point() << '\n';
+    //out << "Move point: " << unit.get_move_point() << '\n';
+
+    return out;
 }

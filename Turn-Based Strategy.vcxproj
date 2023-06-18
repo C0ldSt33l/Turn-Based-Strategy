@@ -142,6 +142,7 @@
     <ClCompile Include="DMG_Dealer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Healer.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="DMG_Dealer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Healer.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="Manager.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Message.h" />

@@ -8,6 +8,7 @@ struct Message {
     enum class Type {
         CREATE,
         KILL,
+        NEXT_TURN,
 
         SELECT,
         UNSELECT,
@@ -20,8 +21,10 @@ struct Message {
         BUFF,
         DEBUFF,
     };
+
     Message::Type type;
     Unit* sender;
+
     union {
         struct {
             Unit* new_unit;

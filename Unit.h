@@ -16,23 +16,21 @@
 struct Message;
 class Unit : public sf::Drawable {
 public:
-    enum class Status {
-        NONE,
-        UNDEFEADABLE,
-        ATK_BUFF,
-        DEF_BUFF,
-        HP_BUFF,
-        STUN,
-        POISON,
-        HIDDEN,
-    };
     enum class Type {
-        DMG_DEALER,
-        HEALER,
+        AOE_DMG_DEALER,
+        SINGLE_DMG_DEALER,
+        AOE_HEALER,
+        SINGLE_HEALER,
+        BUFFER,
+        DEBUFFER,
     };
     enum class Mode {
         MOVING,
         TAKING_ACTION
+    };
+    enum class Team {
+        PLAYER,
+        ENEMY,
     };
 
     static Unit* celected_unit;
@@ -54,8 +52,8 @@ protected:
     sf::Sprite sprite;
     sf::Sprite projection;
 
-    Status status;
-    Mode action_mode;
+    Unit::Team team;
+    Unit::Mode action_mode;
 
     Available_Zone move_zone;
     std::list<Unit*>* targets;
@@ -68,20 +66,25 @@ public:
 
     void set_position(sf::Vector2f const& position);
     void set_position(int x, int y);
-    void set_status(Status status);
     void set_texture(sf::Texture const& texture);
     void set_sprite_color(sf::Color const& color);
 
     void make_selected();
     void make_unselected();
     virtual void switch_mode() = 0;
+    void reset_points();
 
     sf::Uint16 get_id() const;
     sf::Int32 get_hp() const;
+    sf::Int32 get_max_hp() const;
+    Unit::Team get_team() const;
+    bool get_action_point() const;
+    bool get_move_point() const;
     sf::Vector2f get_position() const;
-    Unit::Status get_status() const;
     sf::Texture get_texture() const;
-    bool is_target(Unit const* unit);
+
+    bool has_any_points() const;
+    bool is_target(Unit const* unit) const;
 
     void update(sf::RenderWindow const& window, sf::Event const& event);
     virtual void send_message(Message* message) = 0;
@@ -94,6 +97,8 @@ public:
 
     void take_damage(Unit* attacker, sf::Uint16 damage);
     void take_heal(Unit* healer, sf::Uint16 heal);
+
+    friend std::ostream& operator<<(std::ostream& out, Unit const& unit);
 
     friend class Support;
     friend class Aoe_Healer;

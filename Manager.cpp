@@ -2,46 +2,30 @@
 
 #include "Manager.h"
 #include "Map.h"
-#include "DMG_Dealer.h"
+#include "Single_DMG_Dealer.h"
+#include "Aoe_DMG_Dealer.h"
 #include "Aoe_Healer.h"
 #include "Single_Healer.h"
 
 
-Manager::Manager() {
-    Message* msg;
-        
-   /* msg = new Message;
-    msg->sender = nullptr;
-    msg->set_create(new DMG_Dealer(&map::Map::get_instance()[0], &this->units));
-    this->send_messange(msg);
+Manager::Manager() : cur_team(Unit::Team::ENEMY){
+    this->teams.resize(2);
 
-    msg = new Message;
-    msg->sender = nullptr;
-    DMG_Dealer* unit = new DMG_Dealer(&map::Map::get_instance()[8], &this->units);
-    unit->set_attack_zone(Available_Zone::invert_form(Available_Zone::Type::LINE));
-    msg->set_create(unit);
-    this->send_messange(msg);
-
-    msg = new Message;
-    msg->sender = nullptr;
-    msg->set_create(new DMG_Dealer(&map::Map::get_instance()[7], &this->units));
-    this->send_messange(msg);*/
-
-    msg = new Message;
-    msg->sender = nullptr;
-    msg->set_create(new Aoe_Healer(&map::Map::get_instance()[22], &this->units));
-    this->send_messange(msg);
-
-    msg = new Message;
-    msg->sender = nullptr;
-    msg->set_create(new Single_Healer(&map::Map::get_instance()[21], &this->units));
-    this->send_messange(msg);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_DMG_DEALER, 0);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_DMG_DEALER, 1);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_DMG_DEALER, 3);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::AOE_HEALER, 22);
+    this->add_unit(Unit::Team::ENEMY, Unit::Type::SINGLE_DMG_DEALER, 7);
+    this->add_unit(Unit::Team::ENEMY, Unit::Type::SINGLE_DMG_DEALER, 8);
 }
 Manager::~Manager() {
     for (auto unit : this->units) {
         delete unit;
     }
     this->units.clear();
+    for (auto team : this->teams) {
+        team.clear();
+    }
 
     for (auto msg : this->messages) {
         delete msg;
@@ -50,9 +34,17 @@ Manager::~Manager() {
 }
 
 void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
-    for (auto unit : this->units) {
-        unit->update(window, event);
+    if (!Unit::celected_unit) {
+        for (auto unit : this->teams[int(this->cur_team)]) {
+            unit->update(window, event);
+        }
     }
+    else {
+        for (auto unit : this->units) {
+            unit->update(window, event);
+        }
+    }
+    
 
     Message* cur_msg;
     while (!this->messages.empty()) {
@@ -61,13 +53,17 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
 
         switch (cur_msg->type) {
         case Message::Type::KILL: {
-            auto dead_body = std::find(this->units.cbegin(), this->units.cend(), cur_msg->kill.who_to_kill);
-            delete *dead_body;
-            this->units.erase(dead_body);
+            this->del_unit(cur_msg->kill.who_to_kill);
         } break;
 
         case Message::Type::CREATE: {
-            this->units.push_back(cur_msg->create.new_unit);
+            Unit* new_unit = cur_msg->create.new_unit;
+            this->teams[static_cast<int>(new_unit->get_team())].push_back(new_unit);
+            this->units.push_back(new_unit);
+        } break;
+
+        case Message::Type::NEXT_TURN: {
+            this->next_turn();
         } break;
 
         case Message::Type::SELECT:
@@ -85,9 +81,32 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
             break;
         }
     }
+
+    cur_msg = new Message;
+    cur_msg->sender = nullptr;
+    cur_msg->type = Message::Type::NEXT_TURN;
+    this->send_messange(cur_msg);
 }
 void Manager::send_messange(Message* message) {
     this->messages.push_back(message);
+}
+
+void Manager::add_unit(const Unit::Team team, const Unit::Type type, const sf::Uint16 cell_number) {
+    Message* msg = new Message;
+    msg->sender = nullptr;
+    msg->set_create(Manager::create_unit(team, type, cell_number));
+    Manager::send_messange(msg);
+}
+void Manager::next_turn() {
+    for (auto unit : this->teams[int(this->cur_team)]) {
+        if (unit->has_any_points()) return;
+    }
+
+    int team = !int(this->cur_team);
+    for (auto unit : this->teams[team]) {
+        unit->reset_points();
+    }
+    this->cur_team = static_cast<Unit::Team>(team);
 }
 
 std::list<Unit*> const& Manager::get_units() const {
@@ -103,4 +122,45 @@ void Manager::draw_units(sf::RenderTarget& target) const {
 Manager& Manager::get_instance() {
     static Manager instance;
     return instance;
+}
+
+Unit* Manager::create_unit(const Unit::Team team, const Unit::Type type, const sf::Uint16 cell_number) {
+    Unit* unit = nullptr;
+    int index = static_cast<int>(team);
+
+    switch (type) {
+    case Unit::Type::AOE_HEALER:
+        unit = new Aoe_Healer(team, &map::Map::get_instance()[cell_number], &this->teams[index]);
+        break;
+
+    case Unit::Type::SINGLE_HEALER:
+        unit = new Single_Healer(team, &map::Map::get_instance()[cell_number], &this->teams[index]);
+        break;
+
+    case Unit::Type::AOE_DMG_DEALER:
+        unit = new Aoe_DMG_Dealer(team, &map::Map::get_instance()[cell_number], &this->teams[!index]);
+        break;
+
+    case Unit::Type::SINGLE_DMG_DEALER:
+        unit = new Single_DMG_Dealer(team, &map::Map::get_instance()[cell_number], &this->teams[!index]);
+        break;
+
+    case Unit::Type::BUFFER:
+        break;
+
+    case Unit::Type::DEBUFFER:
+        break;
+    }
+
+    return unit;
+}
+
+void Manager::del_unit(Unit* unit) {
+    int team = static_cast<int>(unit->get_team());
+    auto it = std::find(this->teams[team].cbegin(), this->teams[team].cend(), unit);
+    this->teams[team].erase(it);
+
+    auto dead_body = std::find(this->units.cbegin(), this->units.cend(), unit);
+    delete* dead_body;
+    this->units.erase(dead_body);
 }
