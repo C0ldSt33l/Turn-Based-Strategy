@@ -35,7 +35,7 @@ namespace map {
         void draw_unit_position() const;
 
         Cell& operator[](sf::Uint16 i);
-        Cell const& get_cell(sf::Uint16 i) const;
+        Cell const& update_cells(sf::Uint16 i) const;
 
     private:
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;

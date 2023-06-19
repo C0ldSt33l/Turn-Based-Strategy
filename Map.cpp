@@ -38,14 +38,12 @@ void map::Map::draw_unit_position() const {
         }
         std::cout << (this->cells[i].is_empty() ? "E" : "U");
     }
-
-    system("cls");
 }
 
 Cell& map::Map::operator[](sf::Uint16 i) {
     return cells[i];
 }
-Cell const& map::Map::get_cell(sf::Uint16 i) const {
+Cell const& map::Map::update_cells(sf::Uint16 i) const {
     return this->cells[i];
 }
 

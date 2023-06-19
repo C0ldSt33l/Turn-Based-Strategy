@@ -16,7 +16,7 @@
 struct Message;
 class Unit : public sf::Drawable {
 public:
-    enum class Type {
+    static enum class Type {
         AOE_DMG_DEALER,
         SINGLE_DMG_DEALER,
         AOE_HEALER,
@@ -24,7 +24,7 @@ public:
         BUFFER,
         DEBUFFER,
     };
-    enum class Mode {
+    static enum class Mode {
         MOVING,
         TAKING_ACTION
     };
@@ -55,11 +55,12 @@ protected:
     Unit::Team team;
     Unit::Mode action_mode;
 
-    Available_Zone move_zone;
     std::list<Unit*>* targets;
 
 public:
-    Unit(std::string const file, Cell* cell, sf::Int32 health = 100, std::list<Unit*>* targets = nullptr, Available_Zone::Type move_zone = Available_Zone::Type::RECT);
+    Available_Zone move_zone;
+
+    Unit(std::string const file, Cell* cell, sf::Int32 health, std::list<Unit*>* targets);
     Unit(Unit const& unit);
     virtual ~Unit();
     Unit& operator=(Unit const& unit);
@@ -71,13 +72,13 @@ public:
 
     void make_selected();
     void make_unselected();
-    virtual void switch_mode() = 0;
     void reset_points();
 
     sf::Uint16 get_id() const;
     sf::Int32 get_hp() const;
     sf::Int32 get_max_hp() const;
     Unit::Team get_team() const;
+    Cell* get_cell() const;
     bool get_action_point() const;
     bool get_move_point() const;
     sf::Vector2f get_position() const;
@@ -89,6 +90,8 @@ public:
     void update(sf::RenderWindow const& window, sf::Event const& event);
     virtual void send_message(Message* message) = 0;
     virtual void action(sf::Vector2i const& point) = 0;
+    virtual void update_zones(Cell* cell) = 0;
+    virtual void switch_mode() = 0;
 
     void move_to(Cell* cell);
     void move_by_mouse(sf::Mouse::Button const& button, sf::Vector2i const& point);

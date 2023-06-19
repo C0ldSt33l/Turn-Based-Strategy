@@ -12,11 +12,14 @@ Manager::Manager() : cur_team(Unit::Team::ENEMY){
     this->teams.resize(2);
 
     this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_DMG_DEALER, 0);
-    this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_DMG_DEALER, 1);
-    this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_DMG_DEALER, 3);
-    this->add_unit(Unit::Team::PLAYER, Unit::Type::AOE_HEALER, 22);
-    this->add_unit(Unit::Team::ENEMY, Unit::Type::SINGLE_DMG_DEALER, 7);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::AOE_DMG_DEALER, 9);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::SINGLE_HEALER, 18);
+    this->add_unit(Unit::Team::PLAYER, Unit::Type::AOE_HEALER, 27);
+
     this->add_unit(Unit::Team::ENEMY, Unit::Type::SINGLE_DMG_DEALER, 8);
+    this->add_unit(Unit::Team::ENEMY, Unit::Type::AOE_DMG_DEALER, 17);
+    this->add_unit(Unit::Team::ENEMY, Unit::Type::SINGLE_HEALER, 26);
+    this->add_unit(Unit::Team::ENEMY, Unit::Type::AOE_HEALER, 35);
 }
 Manager::~Manager() {
     for (auto unit : this->units) {
@@ -60,6 +63,8 @@ void Manager::update(sf::RenderWindow const& window, sf::Event const& event) {
             Unit* new_unit = cur_msg->create.new_unit;
             this->teams[static_cast<int>(new_unit->get_team())].push_back(new_unit);
             this->units.push_back(new_unit);
+
+            this->units.back()->update_zones(this->units.back()->get_cell());
         } break;
 
         case Message::Type::NEXT_TURN: {
@@ -102,11 +107,21 @@ void Manager::next_turn() {
         if (unit->has_any_points()) return;
     }
 
+    Message* msg = new Message();
+    msg->sender = nullptr;
+    msg->type = Message::Type::UNSELECT;
+    msg->select.who_to_select = Unit::celected_unit;
+    this->send_messange(msg);
+
     int team = !int(this->cur_team);
     for (auto unit : this->teams[team]) {
         unit->reset_points();
     }
     this->cur_team = static_cast<Unit::Team>(team);
+}
+
+Unit::Team Manager::get_cur_team() const {
+    return this->cur_team;
 }
 
 std::list<Unit*> const& Manager::get_units() const {
@@ -130,19 +145,34 @@ Unit* Manager::create_unit(const Unit::Team team, const Unit::Type type, const s
 
     switch (type) {
     case Unit::Type::AOE_HEALER:
-        unit = new Aoe_Healer(team, &map::Map::get_instance()[cell_number], &this->teams[index]);
+        unit = new Aoe_Healer("textures//tager.png", team, &map::Map::get_instance()[cell_number], &this->teams[index]);
         break;
 
     case Unit::Type::SINGLE_HEALER:
-        unit = new Single_Healer(team, &map::Map::get_instance()[cell_number], &this->teams[index]);
+        unit = new Single_Healer("textures//hakumen.png", team, &map::Map::get_instance()[cell_number], &this->teams[index]);
         break;
 
     case Unit::Type::AOE_DMG_DEALER:
-        unit = new Aoe_DMG_Dealer(team, &map::Map::get_instance()[cell_number], &this->teams[!index]);
+        unit = new Aoe_DMG_Dealer("textures//texture.png", team, &map::Map::get_instance()[cell_number], &this->teams[!index]);
         break;
 
     case Unit::Type::SINGLE_DMG_DEALER:
-        unit = new Single_DMG_Dealer(team, &map::Map::get_instance()[cell_number], &this->teams[!index]);
+        if (Unit::Team::PLAYER == team) 
+            unit = new Single_DMG_Dealer(
+                "textures//naoto.png",
+                team,
+                &map::Map::get_instance()[cell_number],
+                &this->teams[!index],
+                Available_Zone::LINE_ZONE
+            );
+        else
+            unit = new Single_DMG_Dealer(
+                "textures//naoto.png",
+                team,
+                &map::Map::get_instance()[cell_number],
+                &this->teams[!index],
+                Available_Zone::LINE_ZONE.get_invert_zone()
+            );
         break;
 
     case Unit::Type::BUFFER:

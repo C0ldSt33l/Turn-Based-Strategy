@@ -2,8 +2,8 @@
 #include "Manager.h"
 
 
-Aoe_DMG_Dealer::Aoe_DMG_Dealer(const Unit::Team team, Cell* cell, std::list<Unit*>* targets) :
-    DMG_Dealer("texture//texture.png", 50, cell, targets, Available_Zone::Type::RECT) {
+Aoe_DMG_Dealer::Aoe_DMG_Dealer(const std::string file, const Unit::Team team, Cell* cell, std::list<Unit*>* targets) :
+    DMG_Dealer(file, 50, cell, targets, Available_Zone(Available_Zone::RECT_ZONE)) {
     this->team = team;
 }
 Aoe_DMG_Dealer::~Aoe_DMG_Dealer() {}

@@ -1,8 +1,8 @@
 #include "DMG_Dealer.h"
 
 
-DMG_Dealer::DMG_Dealer(std::string const file, sf::Uint16 damage, Cell* cell, std::list<Unit*>* targets, Available_Zone::Type attack_zone) :
-    Unit(file, cell, 100, targets), damage(damage), attack_zone(cell, attack_zone) {}
+DMG_Dealer::DMG_Dealer(std::string const file, sf::Uint16 damage, Cell* cell, std::list<Unit*>* targets, Available_Zone attack_zone) :
+    Unit(file, cell, 100, targets), damage(damage), attack_zone(Available_Zone::Action_Type::ATTACK, attack_zone) {}
 DMG_Dealer::~DMG_Dealer() {}
 
 sf::Uint16 DMG_Dealer::get_damage() const {
@@ -42,6 +42,11 @@ void DMG_Dealer::switch_mode() {
             cell->set_color(SEMI_TRANSPARENT_COLOR);
         }
     }
+}
+
+void DMG_Dealer::update_zones(Cell* cell) {
+    this->move_zone.update(cell);
+    this->attack_zone.update(cell);
 }
 
 void DMG_Dealer::send_message(Message* message) {

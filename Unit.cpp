@@ -7,11 +7,14 @@
 sf::Clock Unit::input_colddown;
 Unit*     Unit::celected_unit = nullptr;
 
-Unit::Unit(std::string const file, Cell* cell, sf::Int32 health, std::list<Unit*>* targets, Available_Zone::Type move_zone) :
-    Drawable(), id(generate_id()), cell(cell), targets(targets), cur_hp(health), max_hp(health), move_zone(cell, move_zone) {
+Unit::Unit(std::string const file, Cell* cell, sf::Int32 health, std::list<Unit*>* targets) :
+    Drawable(), id(generate_id()), cell(cell), targets(targets), cur_hp(health), max_hp(health),
+    move_zone(Available_Zone::Action_Type::MOVE, Available_Zone::RECT_ZONE) {
     if (!this->texture.loadFromFile(file)) {
         exit(1);
     }
+
+    //this->move_to(cell);
     this->cell->unit = this;
     this->sprite = Unit::set_sprite(this->texture, cell->get_position());
 
@@ -69,6 +72,9 @@ bool Unit::get_action_point() const {
 bool Unit::get_move_point() const {
     return this->has_move_point;
 }
+Cell* Unit::get_cell() const {
+    return this->cell;
+}
 sf::Vector2f Unit::get_position() const {
     return this->sprite.getPosition();
 }
@@ -99,7 +105,6 @@ void Unit::make_selected() {
 }
 void Unit::make_unselected() {
     Unit::celected_unit->action_mode = Unit::Mode::MOVING;
-    //Unit::celected_unit->has_action_point = Unit::celected_unit->has_move_point = true;
 
     Unit::celected_unit->set_sprite_color(DEFAULT_COLOR);
     Unit::celected_unit->projection.setPosition(Unit::celected_unit->sprite.getPosition());

@@ -2,8 +2,8 @@
 #include "Manager.h"
 
 
-Single_DMG_Dealer::Single_DMG_Dealer(const Unit::Team team, Cell* cell, std::list<Unit*>* targets) :
-    DMG_Dealer("textures//naoto.png", 50, cell, targets, Available_Zone::Type::LINE) {
+Single_DMG_Dealer::Single_DMG_Dealer(const std::string file, const Unit::Team team, Cell* cell, std::list<Unit*>* targets, Available_Zone const& attack_zone) :
+    DMG_Dealer(file, 50, cell, targets, Available_Zone(attack_zone)) {
     this->team = team;
 }
 Single_DMG_Dealer::~Single_DMG_Dealer() {}

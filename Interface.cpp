@@ -1,14 +1,23 @@
-#include "Interface.h"
-
 #include <format>
 
 #include "Interface.h"
-#include "Unit.h"
 #include "Game.h"
+#include "Unit.h"
+#include "Manager.h"
 
 
 // Interface
-Interface::Interface(std::string const& file) : sf::Drawable(), unit_ui(this->font) {
+const std::vector<std::string> Interface::TURN_STRINGS = {
+    "PLAYER TURN",
+    "ENEMY TURN",
+};
+const std::vector<sf::Color> Interface::TURN_STRING_COLORS = {
+    sf::Color::Blue,
+    sf::Color::Red,
+};
+
+Interface::Interface(std::string const& file) :
+    sf::Drawable(), cur_team(Manager::get_instance().get_cur_team()), unit_ui(this->font) {
     if (!this->font.loadFromFile(file)) {
         exit(1);
     }
@@ -17,12 +26,16 @@ Interface::Interface(std::string const& file) : sf::Drawable(), unit_ui(this->fo
     this->turn.setCharacterSize(48);
     this->turn.setPosition(WINDOW_SIZE.x / 2 - 100, 0);
 
-    this->turn.setFillColor(sf::Color::Blue);
-    this->turn.setString(Interface::PLAYER_TURN);
+    this->turn.setFillColor(Interface::TURN_STRING_COLORS[int(this->cur_team)]);
+    this->turn.setString(Interface::TURN_STRINGS[int(this->cur_team)]);
 }
 Interface::~Interface() {}
 
 void Interface::update() {
+    if (this->cur_team != Manager::get_instance().get_cur_team()) {
+        this->cur_team = Manager::get_instance().get_cur_team();
+        this->set_text(this->turn, Interface::TURN_STRINGS[int(this->cur_team)], Interface::TURN_STRING_COLORS[int(this->cur_team)]);
+    }
     this->unit_ui.update();
 }
 
@@ -39,7 +52,7 @@ void Interface::set_text(sf::Text& text, std::string const& string, sf::Color co
 }
 
 // Unit_Interface
-Interface::Unit_Interface::Unit_Interface(sf::Font const& font) : sf::Drawable(), rect({ 130, 80 }), selected_unit(nullptr) {
+Interface::Unit_Interface::Unit_Interface(sf::Font const& font) : sf::Drawable(), rect({ 130, 80 }) {
     this->rect.setPosition({ 0, 0 });
     this->rect.setFillColor(sf::Color::Yellow);
     //Interface::set_text(this->text, "dhfkd", sf::Color::Black);

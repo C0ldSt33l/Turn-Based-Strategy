@@ -2,8 +2,8 @@
 #include "Manager.h"
 
 
-Single_Healer::Single_Healer(const Unit::Team team, Cell* cell, std::list<Unit*>* targets) :
-    Healer("textures//hakumen.png", 50, cell, targets) {
+Single_Healer::Single_Healer(const std::string file, const Unit::Team team, Cell* cell, std::list<Unit*>* targets) :
+    Healer(file, 50, cell, targets) {
     this->team = team;
 }
 Single_Healer::~Single_Healer() {}

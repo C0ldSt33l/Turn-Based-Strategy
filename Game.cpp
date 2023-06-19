@@ -37,12 +37,19 @@ void Game::draw() {
         std::cout << "Hp: " << unit->get_hp() << "of" << unit->get_max_hp() << '\n';
         std::cout << "Action point: " << unit->get_action_point() << '\n';
         std::cout << "Move point: " << unit->get_move_point() << '\n';
+
+        for (auto cell : unit->move_zone.get_zone()) {
+            if (!cell) continue;
+            std::cout << cell->get_number() << " ";
+        }
+        std::cout << '\n';
     }
-    //std::cout << "\n\nPlayer team size: " << Manager::get_instance().teams[0].size() << '\n';
-    //std::cout << "Enemy team size: " << Manager::get_instance().teams[1].size() << '\n';
+    /*std::cout << "\n\nPlayer team size: " << Manager::get_instance().teams[0].size() << '\n';
+    std::cout << "Enemy team size: " << Manager::get_instance().teams[1].size() << '\n';
+    std::cout << "Team: " << int(Manager::get_instance().get_cur_team()) << '\n';*/
+    map::Map::get_instance().draw_unit_position();
     system("cls");
    
-    //map::Map::get_instance().draw_unit_position();
     window.clear(sf::Color::White);
 
     window.draw(map::Map::get_instance());

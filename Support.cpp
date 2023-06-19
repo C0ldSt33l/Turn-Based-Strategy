@@ -81,3 +81,7 @@ void Support::switch_mode() {
     }
 }
 
+void Support::update_zones(Cell* cell) {
+    this->move_zone.update(cell);
+}
+

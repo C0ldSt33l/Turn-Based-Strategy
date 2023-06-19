@@ -1,15 +1,16 @@
 #pragma once
 
 #include "SFML/Graphics.hpp"
+#include "Unit.h"
 
 
 #define UNIT_STRING "HP: {}/{}\nAction: {}\nMove: {}"
 
-class Unit;
 class Interface : public sf::Drawable {
-    struct Unit_Interface : public sf::Drawable {
-        Unit* selected_unit;
+    static const std::vector<std::string> TURN_STRINGS;
+    static const std::vector<sf::Color> TURN_STRING_COLORS;
 
+    struct Unit_Interface : public sf::Drawable {
         sf::RectangleShape rect;
         sf::Text text;
 
@@ -24,10 +25,8 @@ class Interface : public sf::Drawable {
     sf::Font font;
     sf::Text turn;
 
+    Unit::Team cur_team;
     Unit_Interface unit_ui;
-
-    const std::string PLAYER_TURN = "Player turn";
-    const std::string ENEMY_TURN = "Enemy turn";
 
 public:
     Interface(std::string const& file);
